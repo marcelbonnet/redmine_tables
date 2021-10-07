@@ -1,0 +1,38 @@
+pt-BR:
+  label_id: ID
+  label_custom_tables: Tabelas personalizadas
+  label_glad_custom_tables: Tabelas personalizadas
+  label_custom_table_new: Nova Tabela
+  label_custom_table: Tabelas personalizada
+  label_table: Tabela
+  label_custom_table_edit: Editar tabela
+  glad_custom_tables: Tabelas personalizadas
+  custom_tables: Tabelas personalizadas
+  label_custom_entity_edit: Editar %{name}
+  label_custom_entity_new: Novo %{name}
+  label_custom_table_tab: '%{name}'
+  button_edit_custom_table: Editar tabela
+  button_delete_custom_table: Remover tabela
+  label_custom_field_edit: Editar campo personalizado
+  field_main_custom_field: Coluna principal
+  label_belongs_to: Pertence a
+  field_parent_table: Tabela
+  label_bulk_edit_selected: Edição em lote %{table_name}
+  label_new_column: Nova coluna
+  label_all_tables: Todas as tabelas
+  help_please_configure_table_first: Não há campos personalizados nesta tabela.  %{settings}
+  label_add: Add
+  button_new_comment: Novo comentário
+  label_new_note: Novo comentário
+  field_external_name: Nome externo (API/ArquivoCSV)
+  field_export: Exportar
+  text_missing_permission_manage_custom_tables: Você não tem permissão para administrar tabelas personalizadas
+
+  custom_workflow_observable_custom_entity: Entidade/tabela personalizada
+
+  custom_tables:
+    csv:
+        line: "Linha número #%{line}"
+    file_upload: "Subir arquivo CSV"
+    file_upload_instructions: "O arquivo CSV deve ser codificado como ISO8859-1 ou UTF-8"
+    button_upload: "Carregar CSV"
