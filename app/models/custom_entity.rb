@@ -12,6 +12,7 @@ class CustomEntity < ActiveRecord::Base
                   'sub_entity_ids', 'issue_id', 'external_values'
 
   acts_as_customizable
+  acts_as_attachable
 
   delegate :main_custom_field, to: :custom_table
 

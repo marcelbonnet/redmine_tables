@@ -10,6 +10,7 @@ class CustomTable < ActiveRecord::Base
   has_and_belongs_to_many :roles
 
   acts_as_nested_set
+  acts_as_attachable
 
   store :settings, accessors: [:main_custom_field_id], coder: JSON
 

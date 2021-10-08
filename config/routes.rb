@@ -16,6 +16,7 @@ resources :custom_entities do
     post :context_export
     get :context_menu
     delete :index, action: :destroy
+    post :upload
   end
   member do
     get :add_belongs_to

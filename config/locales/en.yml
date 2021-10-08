@@ -1,6 +1,4 @@
-# English strings go here for Rails i18n
 en:
-  # my_label: "My label"
   label_id: ID
   label_custom_tables: Custom tables
   label_glad_custom_tables: Custom tables
@@ -29,3 +27,12 @@ en:
   field_external_name: External name
   field_export: Export
   text_missing_permission_manage_custom_tables: No permission to manage custom tables!
+
+  custom_workflow_observable_custom_entity: Custom Tables/Custom Entity
+  
+  custom_tables:
+    csv:
+        line: "line number #%{line}"
+    file_upload: "CSV file upload"
+    file_upload_instructions: "CSV must be ISO8859-1 or UTF-8 encoded"
+    button_upload: "Upload"

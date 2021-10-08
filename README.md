@@ -1,25 +1,41 @@
 Redmine Custom Tables
 ==================
 
-This plugin provides a possibility to create custom tables. The table is built with Redmine custom fields. It allows you to create any databases you need for your business and integrate it into your workflow processes.
+This is a fork.
+
+This plugin provides a possibility to create custom tables. The table is built with Redmine custom fields. 
+
+It allows you to create any databases you need for your business and integrate it into your workflow processes using [Redmine Custom Workflows plugin](https://github.com/anteo/redmine_custom_workflows).
 
 <img src="custom_tables.jpg" width="800"/>
 
-[Online demo](https://redmine-app.com/custom_tables)
-* **login:** admin
-* **password:** admin 
 
-Features
+
+Old Features
 -------------
 * Table constructor
+* API
+* Integration with issues
+
+New Features
+-------------
+* Upload CSV file to populate the Tables
+* Minor bug fixes
+
+WIP
+-------------
+
+* Table attachments
+* Integrate with Redmine Workflows (allowing edit based on Issue's status)
+
+Those need to be accessible to non admin users:
+
 * Filtering 
 * Sorting 
 * Grouping
-* Integration with issues
 * History of changes
 * Commenting entities
 * Export CSV/PDF
-* API
 
 Compatibility
 -------------
@@ -28,15 +44,15 @@ Compatibility
 Installation and Setup
 ----------------------
 
-* Clone or [download](https://github.com/frywer/custom_tables/archive/master.zip) this repo into your **redmine_root/plugins/** folder
+* Clone or [download](https://github.com/marcelbonnet/redmine_cw_custom_tables/archive/master.zip) this repo into your **redmine_root/plugins/** folder
 
 ```
-$ git clone https://github.com/frywer/custom_tables.git
+$ git clone https://github.com/marcelbonnet/redmine_cw_custom_tables.git
 ```
 * If you downloaded a tarball / zip from master branch, make sure you rename the extracted folder to `custom_tables`
 * You have to run the plugin rake task to provide the assets (from the Redmine root directory):
 ```
-$ bundle exec rake redmine:plugins:migrate RAILS_ENV=production
+$ RAILS_ENV=production bundle exec rake redmine:plugins:migrate
 ```
 * Restart redmine
 
