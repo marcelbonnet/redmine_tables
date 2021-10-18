@@ -1,5 +1,6 @@
 module CustomTablesHelper
 
+  # FIXME não é usado
   def render_setting_tabs(tabs, selected=params[:tab], locals = {})
     if tabs.any?
       unless tabs.detect {|tab| tab[:name] == selected}
@@ -12,6 +13,7 @@ module CustomTablesHelper
     end
   end
 
+  # usado em views/custom_tables/index.html.erb
   def render_custom_table_content(column, entity)
     value = column.value_object(entity)
     if value.is_a?(Array)
@@ -25,6 +27,7 @@ module CustomTablesHelper
     end
   end
 
+  # FIXME não é usado
   def custom_table_column_value(column, entity, value)
     case column.name
     when :name
@@ -34,6 +37,7 @@ module CustomTablesHelper
     end
   end
 
+  # FIXME não é usado
   def custom_entity_column_value(column, custom_entity, custom_value)
     return format_object(custom_value) unless custom_value.is_a? CustomValue
     value = custom_value.value
@@ -63,6 +67,22 @@ module CustomTablesHelper
         format_object(value)
       end
     end
+  end
+
+  # * permissions: one symbol or an array of symbols
+  def is_user_allowed_to_table?(permissions)
+    user=User.current
+    permissions = [permissions] unless permissions.is_a?(Array)
+    permissions.collect{|perm|  
+      if try(:issue).try(:project).nil?
+        # FIXME se tabela não tiver projeto: 
+        # => qualquer role do usuário já serve
+        # => adicionar opção de role(s) para tabela que não tenha projeto
+        user.allowed_to?(perm, nil, global: true)
+      else
+        user.allowed_to?(perm, issue.project)
+      end
+    }.inject{|memo,b| memo|=b }
   end
 
 end

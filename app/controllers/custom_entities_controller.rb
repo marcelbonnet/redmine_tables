@@ -42,10 +42,11 @@ class CustomEntitiesController < ApplicationController
   end
 
   def new
+    params.permit(["custom_table_id","issue_id","controller","action","back_url"])
     @custom_entity = CustomEntity.new
     @custom_entity.custom_table_id = params[:custom_table_id]
     @custom_entity.custom_field_values = params[:custom_entity][:custom_field_values] if params[:custom_entity]
-    # @custom_entity.issue_id = params[:issue_id] || params[:custom_entity][:issue_id]
+    @custom_entity.issue_id = params[:issue_id] #|| params[:custom_entity][:issue_id]
 
     respond_to do |format|
       format.js
@@ -62,8 +63,10 @@ class CustomEntitiesController < ApplicationController
   end
 
   def create
+    params.permit(["custom_entity","issue_id","controller","action","back_url"])
+    rails Unauthorized unless params.require("custom_entity")
     @custom_entity = CustomEntity.new(author: User.current, custom_table_id: params[:custom_entity][:custom_table_id], issue_id: params[:custom_entity][:issue_id])
-    @custom_entity.safe_attributes = params[:custom_entity]
+    @custom_entity.safe_attributes = parametrize_allowed_attributes
     # @custom_entity.issue_id = params[:issue_id] || params[:custom_entity][:issue_id]
 
     if @custom_entity.save
@@ -83,7 +86,7 @@ class CustomEntitiesController < ApplicationController
   end
 
   # TODO test with API
-  # FIXME CSV should consider setting's locale (decimal, date...)
+  # FIXME CSV should consider setting's locale (decimal, date...): try lib/redmine/export/csv.rb: include Redmine::I18n ; @decimal_separator ||= l(:general_csv_decimal_separator)              ("%.2f" % field).gsub('.', @decimal_separator)
   def upload
     base_ce = CustomEntity.new(author: User.current, custom_table_id: params[:custom_table_id], issue_id: params[:custom_entity][:issue_id])
     # TODO: attach to issue, process and delete (or delete if true in plugin settings)
@@ -101,8 +104,8 @@ class CustomEntitiesController < ApplicationController
     path = Setting.find_by(name: "attachments_storage_path")
     path = "files" if path.nil?
 
-    # FIXME: abrir como UTF. Depois ver se como iso consigo usar as colunas acentuadas com CF.name 
     # FIXME: "/" if Unix
+    # FIXME CSV has option for decimal separator?
     begin
       csv = CSV.open("#{path}/#{attachment.disk_directory}/#{attachment.disk_filename}", headers: true, header_converters: :symbol, col_sep: ';', encoding: "UTF-8").map(&:to_h)
     rescue
@@ -110,22 +113,14 @@ class CustomEntitiesController < ApplicationController
     end
     
     @custom_entities = []
-    # csv_is_valid = false
 
     csv.each{|row|
-      # FIXME: issue, project, values ??
       ce = base_ce.dup
       ce.custom_table.custom_fields.map{|cf| [cf.id, cf.external_name.downcase.to_sym]}.each{|cf|
         ce.custom_field_values = {cf[0] => row[cf[1]]}
       }
 
       @custom_entities << ce
-      # begin
-      #   ce.validate!
-      # rescue => e
-      #   csv_is_valid = false
-      # end
-      # csv_is_valid = ce.valid?
     }
 
     # no need to keep the file after loading its records. We can stil export the table to CSV.
@@ -164,7 +159,7 @@ class CustomEntitiesController < ApplicationController
 
   def update
     @custom_entity.init_journal(User.current)
-    @custom_entity.safe_attributes = params[:custom_entity]
+    @custom_entity.safe_attributes = parametrize_allowed_attributes
 
     if @custom_entity.save
       flash[:notice] = l(:notice_successful_update)
@@ -277,6 +272,11 @@ class CustomEntitiesController < ApplicationController
 
   def find_custom_entities
     @custom_entities = CustomEntity.where(id: (params[:id] || params[:ids]))
+  end
+
+  def parametrize_allowed_attributes()
+    safe_attributes = params[:custom_entity]["custom_field_values"].to_unsafe_h.keys - @custom_entity.readonly_attribute_names
+    params.require(:custom_entity).permit("custom_field_values": safe_attributes)
   end
 
 end

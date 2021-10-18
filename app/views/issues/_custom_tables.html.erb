@@ -1,10 +1,10 @@
-<% if User.current.allowed_to?(:manage_custom_tables, nil, global: true) || User.current.allowed_to?(:view_custom_tables, nil, global: true) %>
+<% if is_user_allowed_to_table?([:view_table_rows,:add_table_row, :edit_table_row, :delete_table_row]) %>
   <% issue.project.all_issue_custom_tables(issue).each do |custom_table| %>
     <% query = custom_table.query(totalable_all: true) %>
     <% query.add_short_filter('issue_id', "=#{issue.id}") %>
     <% back_url = issue_path(issue) %>
     <hr />
-    <% if User.current.allowed_to?(:manage_custom_tables, nil, global: true) %>
+    <% if is_user_allowed_to_table?(:add_table_row) %>
       <div class="contextual">
         <%= link_to l(:button_add), new_custom_entity_path(
             custom_table_id: custom_table.id,
@@ -21,8 +21,6 @@
   <% end %>
 <% elsif issue.project.all_issue_custom_tables(issue).any? %>
   <div class="warning">
-    <p>
-      <strong><%= l(:text_missing_permission_manage_custom_tables) %></strong>
-    </p>
+    <p><%= l(:missing_permission_view_table_rows) %></p>
   </div>
 <% end %>

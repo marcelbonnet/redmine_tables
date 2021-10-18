@@ -1,5 +1,6 @@
 module CustomEntitiesHelper
 
+  # usado em views/custom_entities/_history.html.erb
   def render_custom_entity_notes(journal, options={})
     content = ''
     links = []
@@ -10,6 +11,7 @@ module CustomEntitiesHelper
     content_tag('div', content.html_safe, :id => "journal-#{journal.id}-notes", class: css_classes)
   end
 
+  # usado em views/custom_tables/show.json.jbuilder e views/custom_tables/show.api.rsb
   def render_api_custom_entity(custom_entity, api)
     return if custom_entity.custom_values.empty?
     api.id custom_entity.id

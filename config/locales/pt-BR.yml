@@ -34,5 +34,22 @@ pt-BR:
     csv:
         line: "Linha número #%{line}"
     file_upload: "Subir arquivo CSV"
-    file_upload_instructions: "O arquivo CSV deve ser codificado como ISO8859-1 ou UTF-8"
+    file_upload_instructions: "O arquivo CSV deve ser codificado como ISO8859-1 ou UTF-8. Pode ter as colunas em qualquer ordem. O CSV deve ter cabeçalho, usando os nomes de colunas do arquivo de exemplo."
+    example_file: "Arquivo de exemplo"
     button_upload: "Carregar CSV"
+
+  missing_permission_view_table_rows: Sem permissão para ver linhas de tabelas
+
+  activerecord:
+    errors:
+      messages:
+        readonly_cf: "Campo personalizado somente leitura"
+
+  permission_view_custom_tables: "Ver tabelas personalizadas"
+  permission_view_table_rows: "Ver linhas de tabelas"
+  permission_add_table_row: "Adicionar linha em tabela"
+  permission_edit_table_row: "Editar linha de tabela"
+  permission_delete_table_row: "Remover linha de tabela"
+  permission_upload_csv_to_table: "Subir arquivo csv em tabela"
+  permission_table_context_menu: "Menu de contexto de tabela"
+  permission_table_bulk_edit: "Edição em lote de tabela"

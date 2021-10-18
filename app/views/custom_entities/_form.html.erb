@@ -11,8 +11,10 @@
             <% i = 0 %>
             <% split_on = (custom_field_values.size / 2.0).ceil - 1 %>
             <% custom_field_values.each do |value| %>
-                <% if value.editable? %>
-                    <p><%= custom_field_tag_with_label :custom_entity, value %></p>
+                <% if value.editable? && !@custom_entity.readonly_attribute?(value.custom_field_id) %>
+                    <%# custom_field_tag_with_label invokes the CF edit_tag, so its nos possible to set readonly/disabled attribute from here %>
+                    <p><%= custom_field_tag_with_label :custom_entity, value, {:required => @custom_entity.required_attribute?(value.custom_field_id) } %>
+                    </p>
                 <% end %>
                 <% if i == split_on -%>
                     </div>

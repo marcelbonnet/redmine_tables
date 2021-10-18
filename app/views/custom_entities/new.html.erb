@@ -40,6 +40,7 @@ issue_id = params[:issue_id] || params[:custom_entity][:issue_id] || @custom_ent
 <% unless issue_id.nil? %>
     <h3><%=l("custom_tables.file_upload")%></h3>
     <p><%=l("custom_tables.file_upload_instructions")%></p>
+    <%= link_to l("custom_tables.example_file"), csv_example_custom_tables_path(custom_table_id) %>
     <%= form_tag(upload_custom_entities_path) do %>
     <div class="box">
     <p><label><%=l(:label_attachment_new)%></label><%= render :partial => 'attachments/form' %></p>

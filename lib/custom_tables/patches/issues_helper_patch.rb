@@ -1,0 +1,1 @@
+IssuesHelper.send(:include, CustomTablesHelper)

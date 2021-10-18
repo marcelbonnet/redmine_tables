@@ -6,6 +6,7 @@ resources :custom_tables
 resources :custom_tables do
   collection do
     get :context_menu
+    get '/:id/csv/example', to: 'custom_tables#csv_example', as: :csv_example, defaults: { format: 'csv' }
   end
 end
 resources :table_fields

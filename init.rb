@@ -11,12 +11,48 @@ Redmine::Plugin.register :redmine_cw_custom_tables do
   url 'https://github.com/marcelbonnet/redmine_cw_custom_tables'
   author_url 'https://github.com/marcelbonnet'
 
+
+  # TODO remove permission
+  ActiveSupport::Deprecation.warn("permission :manage_custom_tables will be removed")
   permission :manage_custom_tables, {
       custom_entities: [:new, :edit, :create, :update, :destroy, :context_menu, :bulk_edit, :bulk_update, :upload],
+      custom_tables: [:csv_example],
   }, global: true
 
+  # TODO remove permission
+  ActiveSupport::Deprecation.warn("permission :view_custom_tables will be removed")
   permission :view_custom_tables, {
     custom_entities: [:show],
+  }, global: true
+
+  ActiveSupport::Deprecation.warn("permission remover global:true ?")
+  permission :view_table_rows, {
+    custom_entities: [:show],
+  }, global: true
+
+  permission :add_table_row, {
+      custom_entities: [:new, :create],
+  }, global: true
+
+  permission :edit_table_row, {
+      custom_entities: [:edit, :update],
+  }, global: true
+
+  permission :delete_table_row, {
+      custom_entities: [:destroy],
+  }, global: true
+
+  permission :upload_csv_to_table, {
+      custom_entities: [:new, :create, :upload],
+      custom_tables: [:csv_example],
+  }, global: true
+
+  permission :table_context_menu, {
+      custom_entities: [:context_menu],
+  }, global: true
+
+  permission :table_bulk_edit, {
+      custom_entities: [:bulk_edit, :bulk_update],
   }, global: true
 
   Redmine::FieldFormat::UserFormat.customized_class_names << 'CustomEntity'

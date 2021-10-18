@@ -157,6 +157,18 @@ class CustomTablesController < ApplicationController
     call_hook(:controller_setting_tabs_after, { setting_tabs: @setting_tabs, custom_table: @custom_table })
   end
 
+  # Example CSV with expected header names for the importer
+  def csv_example
+    @custom_table = CustomTable.find(params[:id])
+    csv = "\xEF\xBB\xBF" # UTF-8 with BOM
+    csv += @custom_table.custom_fields.collect{|cf| cf.external_name.downcase}.join(";")
+    respond_to do |format|
+      format.csv {
+        send_data(csv, :type => 'text/csv; header=present', filename: "#{@custom_table.name}.csv")
+      }
+    end
+  end
+
   private
 
   def find_custom_table

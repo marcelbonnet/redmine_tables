@@ -34,5 +34,13 @@ en:
     csv:
         line: "line number #%{line}"
     file_upload: "CSV file upload"
-    file_upload_instructions: "CSV must be ISO8859-1 or UTF-8 encoded"
+    file_upload_instructions: "CSV must be ISO8859-1 or UTF-8 encoded. Columns in any order. Must have header names as in example file."
+    example_file: "Example file"
     button_upload: "Upload"
+
+  missing_permission_view_table_rows: No permission to view table rows
+
+  activerecord:
+    errors:
+      messages:
+        readonly_cf: "Read only custom field"
