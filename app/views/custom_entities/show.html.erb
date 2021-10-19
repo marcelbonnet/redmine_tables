@@ -1,7 +1,12 @@
+<%# menu superior da tela de show custom_entity, semelhante a de issue/show%>
 <div class="contextual">
   <%= call_hook(:view_custom_table_table_field_action_menu) %>
-  <%= link_to l(:button_edit), edit_custom_entity_path(@custom_entity, back_url: custom_entity_path(@custom_entity)), remote: true, class: 'icon icon-edit' %>
+  <% if is_user_allowed_to_table?([:edit_table_row]) %>
+    <%= link_to l(:button_edit), edit_custom_entity_path(@custom_entity, back_url: custom_entity_path(@custom_entity)), remote: true, class: 'icon icon-edit' %>
+  <% end %>
+  <%# FIXME adicionar permissão de add comentário%>
   <%= link_to l(:button_new_comment), new_note_custom_entity_path(@custom_entity), remote: true, class: 'icon icon-issue-edit' %>
+  <%# FIXME adicionar permissão de delete comentário%>
   <%= link_to l(:button_delete), custom_entity_path(@custom_entity, custom_table_id: @custom_entity.custom_table), data: {confirm: l(:text_are_you_sure)}, method: :delete, title: l(:button_delete), class: 'icon icon-del' %>
 </div>
 
@@ -40,6 +45,7 @@
   <% end %>
 
   </div>
+  <%# FIXME adicionar permissão de ver journals/comentários? %>
   <% if @journals.present? %>
       <div id="history">
         <h3><%= l(:label_history) %></h3>

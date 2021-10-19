@@ -5,7 +5,7 @@ class CustomEntitiesController < ApplicationController
   helper :issues
   include TimelogHelper
   helper :journals
-  helper :custom_tables
+  include CustomTablesHelper
   helper :context_menus
   helper :custom_fields
   helper :queries
@@ -24,6 +24,7 @@ class CustomEntitiesController < ApplicationController
   before_action :find_custom_entities, only: [:context_menu, :bulk_edit, :bulk_update, :destroy, :context_export]
   before_action :find_journals, only: :show
 
+  # FIXME implementar algo ? o index HTML é uma tela vazia. API ?
   def index
     respond_to do |format|
       format.html
@@ -32,6 +33,8 @@ class CustomEntitiesController < ApplicationController
   end
 
   def show
+    raise Unauthorized unless is_user_allowed_to_table?(:view_table_rows)
+
     @queries_scope = []
     respond_to do |format|
       format.js
@@ -42,6 +45,8 @@ class CustomEntitiesController < ApplicationController
   end
 
   def new
+    raise Unauthorized unless is_user_allowed_to_table?(:add_table_row)
+
     params.permit(["custom_table_id","issue_id","controller","action","back_url"])
     @custom_entity = CustomEntity.new
     @custom_entity.custom_table_id = params[:custom_table_id]
@@ -55,6 +60,7 @@ class CustomEntitiesController < ApplicationController
   end
 
   def new_note
+    #FIXME adicionar permissão
 
     respond_to do |format|
       format.js
@@ -63,8 +69,10 @@ class CustomEntitiesController < ApplicationController
   end
 
   def create
+    raise Unauthorized unless is_user_allowed_to_table?(:add_table_row)
+
     params.permit(["custom_entity","issue_id","controller","action","back_url"])
-    rails Unauthorized unless params.require("custom_entity")
+    raise Unauthorized unless params.require("custom_entity")
     @custom_entity = CustomEntity.new(author: User.current, custom_table_id: params[:custom_entity][:custom_table_id], issue_id: params[:custom_entity][:issue_id])
     @custom_entity.safe_attributes = parametrize_allowed_attributes
     # @custom_entity.issue_id = params[:issue_id] || params[:custom_entity][:issue_id]
@@ -88,6 +96,8 @@ class CustomEntitiesController < ApplicationController
   # TODO test with API
   # FIXME CSV should consider setting's locale (decimal, date...): try lib/redmine/export/csv.rb: include Redmine::I18n ; @decimal_separator ||= l(:general_csv_decimal_separator)              ("%.2f" % field).gsub('.', @decimal_separator)
   def upload
+    raise Unauthorized unless is_user_allowed_to_table?(:upload_csv_to_table)
+
     base_ce = CustomEntity.new(author: User.current, custom_table_id: params[:custom_table_id], issue_id: params[:custom_entity][:issue_id])
     # TODO: attach to issue, process and delete (or delete if true in plugin settings)
     # attachment = Attachment.attach_files(Issue.find(params[:custom_entity][:issue_id]), params[:attachments])
@@ -150,6 +160,8 @@ class CustomEntitiesController < ApplicationController
   end #upload
 
   def edit
+    raise Unauthorized unless is_user_allowed_to_table?(:edit_table_row)
+
     @tab = @custom_entity.custom_table.name
     respond_to do |format|
       format.js
@@ -158,6 +170,8 @@ class CustomEntitiesController < ApplicationController
   end
 
   def update
+    raise Unauthorized unless is_user_allowed_to_table?(:edit_table_row)
+
     @custom_entity.init_journal(User.current)
     @custom_entity.safe_attributes = parametrize_allowed_attributes
 
@@ -178,6 +192,8 @@ class CustomEntitiesController < ApplicationController
   end
 
   def destroy
+    raise Unauthorized unless is_user_allowed_to_table?(:delete_table_row)
+
     custom_table = @custom_entities.first.custom_table
     @custom_entities.destroy_all
 
@@ -190,6 +206,7 @@ class CustomEntitiesController < ApplicationController
     end
   end
 
+  #FIXME onde é usado? precisa de permissão?
   def add_belongs_to
     @custom_field = CustomEntityCustomField.find(params[:custom_field_id])
     @tab = @custom_entity.custom_table.name
@@ -205,6 +222,7 @@ class CustomEntitiesController < ApplicationController
     end
     @custom_entity_ids = @custom_entities.map(&:id).sort
 
+    # FIXME incluir verificação no workflow
     can_edit = @custom_entities.detect{|c| !c.editable?}.nil?
     can_delete = @custom_entities.detect{|c| !c.deletable?}.nil?
     @can = {:edit => can_edit, :delete => can_delete}
@@ -216,10 +234,14 @@ class CustomEntitiesController < ApplicationController
   end
 
   def bulk_edit
+    raise Unauthorized unless is_user_allowed_to_table?(:table_bulk_edit)
+
     @custom_fields = @custom_entities.map { |c| c.available_custom_fields }.reduce(:&).uniq
   end
 
   def bulk_update
+    raise Unauthorized unless is_user_allowed_to_table?(:table_bulk_edit)
+    
     unsaved, saved = [], []
     attributes = parse_params_for_bulk_update(params[:custom_entity])
     @custom_entities.each do |custom_entity|

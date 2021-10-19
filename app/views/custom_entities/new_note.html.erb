@@ -1,3 +1,4 @@
+<%# TODO precisa de uma permissão para notas %>
 <%= labelled_form_for :custom_entity, @custom_entity, url: custom_entity_path(back_url: custom_entity_path(@custom_entity)), mehod: :put, html: {id: 'new_custom_entity_form'} do |f|  %>
     <fieldset><legend><%= l(:field_notes) %></legend>
       <%= f.text_area :notes, rows: 5, class: 'wiki-edit', id: "custom-entity-note-#{@custom_entity.id}", no_label: true %>

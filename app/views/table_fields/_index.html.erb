@@ -1,3 +1,4 @@
+<%# Tab de CFs que lista as colunas existentes numa tabela (admin view)%>
 <% back_url = edit_custom_table_path(@custom_table, tab: 'custom_fields')%>
 <div class="contextual">
   <%= link_to l(:label_new_column), new_table_field_path(custom_table_id: @custom_table, back_url: back_url), remote: true, class: 'icon icon-custom-fields' %>

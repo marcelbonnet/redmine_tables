@@ -1,12 +1,17 @@
 <% class_name = @custom_entities.first.class.name %>
 <ul>
   <% if @custom_entity %>
+    <%# TODO só o admin consegue acessar /show%>
     <% if User.current.admin? %>
       <li><%= context_menu_link l(:button_show), custom_entity_path(@custom_entity), class: 'icon-show' %></li>
     <% end %>
+    <% if is_user_allowed_to_table?([:edit_table_row]) %>
       <li><%= context_menu_link l(:button_edit), edit_custom_entity_path(@custom_entity, edit_query: true, back_url: params[:back_url]), remote: true, class: 'icon icon-edit', disabled: !@can[:edit] %></li>
+    <% end %>
   <% else %>
+    <% if is_user_allowed_to_table?([:table_bulk_edit]) %>
       <li><%= context_menu_link l(:button_edit), bulk_edit_custom_entities_path(ids: @custom_entity_ids, back_url: @back), remote: true, class: 'icon icon-edit' %></li>
+    <% end %>
   <% end %>
   <li class="folder">
     <a href="#" class="submenu"><%= l(:field_export) %></a>
@@ -16,5 +21,8 @@
       <%= call_hook(:view_context_menu_custom_entities_export, { ids: @custom_entity_ids, back_url: @back, params: params, class_name: class_name }) %>
     </ul>
   </li>
-  <li><%= context_menu_link l(:button_delete), custom_entities_path(ids: @custom_entity_ids, back_url: @back), method: :delete, data: {confirm: l(:text_are_you_sure)}, class: 'icon icon-del', disabled: !@can[:delete] %></li>
+  <% if is_user_allowed_to_table?([:delete_table_row]) %>
+    <li><%= context_menu_link l(:button_delete), custom_entities_path(ids: @custom_entity_ids, back_url: @back), method: :delete, data: {confirm: l(:text_are_you_sure)}, class: 'icon icon-del', disabled: !@can[:delete] %>
+    </li>
+  <% end %>
 </ul>
