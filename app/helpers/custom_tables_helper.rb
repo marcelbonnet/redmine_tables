@@ -85,4 +85,19 @@ module CustomTablesHelper
     }.inject{|memo,b| memo|=b }
   end
 
+  # return true if usuário tem algum CF editável no status atual de uma issue
+  def is_editable_to?
+    user=User.current
+    # true se não tiver projeto. Se tiver, poderá ou não ser adiciona por uma issue!
+    
+    # se tiver issue ...
+      # return false if todos cfs readonly
+      # return true
+    
+    # se não tiver issue ... (tem projeto, mas está sendo editada em outra view, sem issue)
+      # return true if se usuário está no grupo autorizado para editar por fora
+      # return false
+
+  end
+
 end

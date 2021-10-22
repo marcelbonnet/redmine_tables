@@ -1,0 +1,3 @@
+module TablePermissionsHelper
+	include WorkflowsHelper
+end

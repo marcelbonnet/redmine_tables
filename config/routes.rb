@@ -9,6 +9,10 @@ resources :custom_tables do
     get '/:id/csv/example', to: 'custom_tables#csv_example', as: :csv_example, defaults: { format: 'csv' }
   end
 end
+
+match '/tables/permissions', :to => 'table_permissions#permissions', :via => [:get, :post]
+match '/tables/permissions_copy', :to => 'table_permissions#permission_copy', :via => :get
+
 resources :table_fields
 resources :custom_entities do
   collection do

@@ -169,12 +169,13 @@ class CustomTablesController < ApplicationController
     end
   end
 
+  
   private
 
   def find_custom_table
     @custom_table = CustomTable.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render_404
+    rescue ActiveRecord::RecordNotFound
+      render_404
   end
 
   def find_custom_tables
