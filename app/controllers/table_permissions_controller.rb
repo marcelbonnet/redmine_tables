@@ -4,13 +4,7 @@ class TablePermissionsController < ApplicationController
 
   include WorkflowsHelper
   
-  # TODO accept_api_auth :index, :edit ...
-
-  def index
-    @roles = Role.sorted.select(&:consider_workflow?) # can add/edit issue
-    @trackers = Tracker.sorted
-    @workflow_counts = WorkflowTransition.group(:tracker_id, :role_id).count
-  end
+  # TODO accept_api_auth :permissions
 
   def permissions
     find_trackers_roles_and_statuses_for_edit
@@ -22,7 +16,7 @@ class TablePermissionsController < ApplicationController
       end
       WorkflowPermission.replace_permissions(@trackers, @roles, permissions)
       flash[:notice] = l(:notice_successful_update)
-      redirect_to_referer_or tables_permissions_path
+      redirect_to_referer_or custom_tables_permissions_path
       return
     end
 
@@ -33,47 +27,50 @@ class TablePermissionsController < ApplicationController
     end
   end
 
-  def permission_copy
-  #   @roles = Role.sorted.select(&:consider_workflow?)
-  #   @trackers = Tracker.sorted
+  def copy
+    @roles = Role.order(:name).select(&:consider_workflow?)
+    @trackers = Tracker.order(:name)
 
-  #   if params[:source_tracker_id].blank? || params[:source_tracker_id] == 'any'
-  #     @source_tracker = nil
-  #   else
-  #     @source_tracker = Tracker.find_by_id(params[:source_tracker_id].to_i)
-  #   end
-  #   if params[:source_role_id].blank? || params[:source_role_id] == 'any'
-  #     @source_role = nil
-  #   else
-  #     @source_role = Role.find_by_id(params[:source_role_id].to_i)
-  #   end
-  #   @target_trackers =
-  #     if params[:target_tracker_ids].blank?
-  #       nil
-  #     else
-  #       Tracker.where(:id => params[:target_tracker_ids]).to_a
-  #     end
-  #   @target_roles =
-  #     if params[:target_role_ids].blank?
-  #       nil
-  #     else
-  #       Role.where(:id => params[:target_role_ids]).to_a
-  #     end
-  #   if request.post?
-  #     if params[:source_tracker_id].blank? || params[:source_role_id].blank? ||
-  #          (@source_tracker.nil? && @source_role.nil?)
-  #       flash.now[:error] = l(:error_workflow_copy_source)
-  #     elsif @target_trackers.blank? || @target_roles.blank?
-  #       flash.now[:error] = l(:error_workflow_copy_target)
-  #     else
-  #       WorkflowRule.copy(@source_tracker, @source_role, @target_trackers, @target_roles)
-  #       flash[:notice] = l(:notice_successful_update)
-  #       redirect_to(
-  #         workflows_copy_path(:source_tracker_id => @source_tracker,
-  #                             :source_role_id => @source_role)
-  #       )
-  #     end
-  #   end
+    if params[:source_tracker_id].blank? || params[:source_tracker_id] == 'any'
+      @source_tracker = nil
+    else
+      @source_tracker = Tracker.find_by_id(params[:source_tracker_id].to_i)
+    end
+    if params[:source_role_id].blank? || params[:source_role_id] == 'any'
+      @source_role = nil
+    else
+      @source_role = Role.find_by_id(params[:source_role_id].to_i)
+    end
+    @target_trackers =
+      if params[:target_tracker_ids].blank?
+        nil
+      else
+        Tracker.where(:id => params[:target_tracker_ids]).to_a
+      end
+    @target_roles =
+      if params[:target_role_ids].blank?
+        nil
+      else
+        Role.where(:id => params[:target_role_ids]).to_a
+      end
+    if request.post?
+      if params[:source_tracker_id].blank? || params[:source_role_id].blank? ||
+           (@source_tracker.nil? && @source_role.nil?)
+        flash.now[:error] = l(:error_workflow_copy_source)
+      elsif @target_trackers.blank? || @target_roles.blank?
+        flash.now[:error] = l(:error_workflow_copy_target)
+      else
+        WorkflowRule.copy(@source_tracker, @source_role, @target_trackers, @target_roles)
+        flash[:notice] = l(:notice_successful_update)
+        redirect_to(
+          custom_tables_permissions_copy_path(:source_tracker_id => @source_tracker,
+                              :source_role_id => @source_role)
+        )
+      end
+    end
+  end
+
+  def teste
   end
 
   private
