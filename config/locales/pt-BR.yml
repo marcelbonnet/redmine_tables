@@ -43,7 +43,8 @@ pt-BR:
   activerecord:
     errors:
       messages:
-        readonly_cf: "Campo personalizado somente leitura"
+        readonly_cf: "Campo personalizado \"somente leitura\""
+        readonly_fields: "Todos os campos são \"somente leitura\""
 
   permission_view_custom_tables: "Ver tabelas personalizadas"
   permission_view_table_rows: "Ver linhas de tabelas"

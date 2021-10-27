@@ -102,13 +102,23 @@ class CustomEntitiesController < ApplicationController
     # TODO: attach to issue, process and delete (or delete if true in plugin settings)
     # attachment = Attachment.attach_files(Issue.find(params[:custom_entity][:issue_id]), params[:attachments])
 
-    attachment = Attachment.find(params[:attachments]["1"]["token"].split('.').first)
-    # forçando na marra. Alguém deveria acts_as_attachable tabela ou entity. Mas para a entity, teria que salvar uma antes?
-    # CustomTable.last.attachments (funcionou)
-    attachment.container_id = params[:custom_table_id]
-    attachment.container_type = "CustomTable"
-    attachment.description = params[:attachments]["1"]["description"]
-    attachment.save
+    begin
+      attachment = Attachment.find(params[:attachments]["1"]["token"].split('.').first)
+      # forçando na marra. Alguém deveria acts_as_attachable tabela ou entity. Mas para a entity, teria que salvar uma antes?
+      # CustomTable.last.attachments (funcionou)
+      attachment.container_id = params[:custom_table_id]
+      attachment.container_type = "CustomTable"
+      attachment.description = params[:attachments]["1"]["description"]
+      attachment.save
+    rescue => e
+      flash[:error] = e.message
+      @custom_entity = base_ce
+      return respond_to do |format|
+        format.js   { render action: 'new' }
+        format.html { render action: 'new' }
+        format.api  { render action: 'new' }
+      end
+    end
 
 
     path = Setting.find_by(name: "attachments_storage_path")
@@ -128,6 +138,10 @@ class CustomEntitiesController < ApplicationController
     csv.each{|row|
       ce = base_ce.dup
       safe_attributes = ce.custom_field_values.collect{|o| o.custom_field_id} - ce.readonly_attribute_names.map(&:to_i)
+      if safe_attributes.size == 0
+        @ro_attrs_err = l("activerecord.errors.messages.readonly_fields")
+        next
+      end
       ce.custom_table.custom_fields.map{|cf| [cf.id, cf.external_name.downcase.to_sym]}.each{|cf|
         ce.custom_field_values = {cf[0] => row[cf[1]]} if safe_attributes.include?(cf[0])
       }
@@ -152,6 +166,7 @@ class CustomEntitiesController < ApplicationController
         format.api  { render action: 'show', status: :created, location: custom_entity_url(@custom_entities.last) }
       end
     else
+      flash[:error] = @ro_attrs_err if @ro_attrs_err
       respond_to do |format|
         format.js { render action: 'new' }
         format.html { render action: 'new' }
