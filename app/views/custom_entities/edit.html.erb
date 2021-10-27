@@ -1,4 +1,5 @@
 <%= labelled_form_for :custom_entity, @custom_entity, url: custom_entity_path(project_id: params[:project_id]), html: {multipart: true, id: 'custom_entity_form'} do |f|  %>
     <%= render partial: 'form', locals: {f: f} %>
+    <%#FIXME o button só deve ser exibido se houver algo para editar/permitido para editar. Ele é exibido até quando todos os campos são RO (form vazio)%>
     <%= submit_tag l(:button_update) %>
 <% end %>

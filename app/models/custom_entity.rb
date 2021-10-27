@@ -20,7 +20,9 @@ class CustomEntity < ActiveRecord::Base
 
   self.journal_options = {}
 
-  validate :validate_required_fields, #:validate_readonly_fields #, :validate_permissions
+  validate :validate_required_fields
+
+  # TODO limpeza: remover lambda se não for necessário
   # validate lambda {
   #   # custom_values()
   #   # if new_record? || custom_field_values_changed?
@@ -31,6 +33,7 @@ class CustomEntity < ActiveRecord::Base
   #   errors.add(CustomEntityCustomField.last.name, 'teste de erro') 
   # }
 
+  # TODO limpeza: remover
   # validates_each :first_name, :last_name do |record, attr, value|
   #   record.errors.add attr, 'starts with z.' if value.to_s[0] == ?z
   # end
@@ -44,6 +47,7 @@ class CustomEntity < ActiveRecord::Base
     end
   end
 
+  # FIXME mover a função do helper para cá?
   def editable?(user = User.current)
     return true if user.admin? || custom_table.is_for_all
     user.allowed_to?(:edit_issues, issue.project)
@@ -116,7 +120,6 @@ class CustomEntity < ActiveRecord::Base
   def validate_required_fields
     # ignore if there is no project to get the user Roles
     return if self.try(:issue).try(:project).nil?
-
     user = new_record? ? author : current_journal.try(:user)
 
     required_attribute_names(user).each do |attribute|
@@ -128,8 +131,9 @@ class CustomEntity < ActiveRecord::Base
     end
   end
 
-  # Validates the fields against "readonly" workflow requirements
-  # def validate_readonly_fields
+  # TODO limpeza: remover método validate_unwriteable_fields se não for mesmo necessário
+  # # Validates the fields against "readonly" workflow requirements.
+  # def validate_unwriteable_fields
   #   # ignore if there is no project to get the user Roles
   #   return if self.try(:issue).try(:project).nil?
 
@@ -138,13 +142,18 @@ class CustomEntity < ActiveRecord::Base
   #     attribute = attribute.to_i
   #     v = custom_field_values.detect {|v| v.custom_field_id == attribute}
   #     if v && Array(v.value).detect(&:present?)
+  #       # binding.pry
+  #       # esses campos estão no params? talvez devam ser marcados como unsafe
+  #       # eu preciso coibir o envio desses campos RO pelo params/robot, api...
+  #       # mas a view também está disparando erro quando chega nesse método
+  #       #   ver que params a view está mandando
+  #       # o controlador não deve carregar o custom value que não pode ser editado, assim ele virá vazio. Qualquer valor aqui será persistido no save... Nem sei se o valor que está aqui veio do objeto ou do request?
   #       errors.add(v.custom_field.name, l('activerecord.errors.messages.readonly_cf'))
-  #       # devo fazer .reject dos ro? ou pode acontecer do cara enviar via robot?
-  #       # devo mandar o params para cá e testar?
   #     end
   #   end
   # end
 
+  # TODO limpeza: remover método validate_permissions se não for mesmo necessário
   # def validate_permissions
   #   binding.pry
   #   trackers = allowed_target_trackers(User.current)
@@ -155,11 +164,13 @@ class CustomEntity < ActiveRecord::Base
   #   end
   # end
 
+  # TODO limpeza: remover método
   # # Returns a scope of trackers that user can assign the issue to
   # def allowed_target_trackers(user=User.current)
   #   self.class.allowed_target_trackers(issue, user, issue.tracker_id_was) unless self.try(:issue).nil?
   # end
 
+  # TODO limpeza: remover método
   # # Returns a scope of trackers that user can assign project issues to
   # def self.allowed_target_trackers(issue, user=User.current, current_tracker=nil)
   #   if issue.project
@@ -180,13 +191,14 @@ class CustomEntity < ActiveRecord::Base
   #   end
   # end
 
+  
+
   # Returns a hash of the workflow rule by attribute for the given user
   #
   # Examples:
   #   custom_entity.workflow_rule_by_attribute # => {'due_date' => 'required', 'start_date' => 'readonly'}
   def workflow_rule_by_attribute(user=nil)
     return @workflow_rule_by_attribute if @workflow_rule_by_attribute && user.nil?
-#FIXME não está listando os CustomEntityCustomField que salvei no WorkflowPermission no console
     user_real = user || User.current
     roles = user_real.admin ? Role.all.to_a : user_real.roles_for_project(issue.project)
     roles = roles.select(&:consider_workflow?)
@@ -204,10 +216,6 @@ class CustomEntity < ActiveRecord::Base
         h[wp.field_name][wp.role_id] = wp.rule
         h
       end
-      # workflow_rules["652"] # CustomEntity
-      # => {12=>"required"}
-      # Role.find(12).name  
-      # => "Inspeção-Execução"
 
       # ######################
       # fields invisíveis
@@ -247,7 +255,11 @@ class CustomEntity < ActiveRecord::Base
     @workflow_rule_by_attribute = result if user.nil?
     result
   end
-  private :workflow_rule_by_attribute
+  # private :workflow_rule_by_attribute
+
+  # def attribute_names_by_workflow_rule(user=nil)
+  #   workflow_rule_by_attribute(user).select {|attr, rule| rule != 'readonly'}.keys
+  # end
 
   # Returns the names of required attributes for user or the current user
   # For users with multiple roles, the required fields are the intersection of

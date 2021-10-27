@@ -124,10 +124,12 @@ class CustomEntitiesController < ApplicationController
     
     @custom_entities = []
 
+
     csv.each{|row|
       ce = base_ce.dup
+      safe_attributes = ce.custom_field_values.collect{|o| o.custom_field_id} - ce.readonly_attribute_names.map(&:to_i)
       ce.custom_table.custom_fields.map{|cf| [cf.id, cf.external_name.downcase.to_sym]}.each{|cf|
-        ce.custom_field_values = {cf[0] => row[cf[1]]}
+        ce.custom_field_values = {cf[0] => row[cf[1]]} if safe_attributes.include?(cf[0])
       }
 
       @custom_entities << ce
@@ -296,7 +298,7 @@ class CustomEntitiesController < ApplicationController
     @custom_entities = CustomEntity.where(id: (params[:id] || params[:ids]))
   end
 
-  def parametrize_allowed_attributes()
+  def parametrize_allowed_attributes
     safe_attributes = params[:custom_entity]["custom_field_values"].to_unsafe_h.keys - @custom_entity.readonly_attribute_names
     params.require(:custom_entity).permit("custom_field_values": safe_attributes)
   end
