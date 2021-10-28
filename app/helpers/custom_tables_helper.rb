@@ -70,7 +70,7 @@ module CustomTablesHelper
   end
 
   # * permissions: one symbol or an array of symbols
-  def is_user_allowed_to_table?(permissions, entity:nil, issue:nil)
+  def is_user_allowed_to_table?(permissions, entity:nil, issue:nil, skip_workflow:false)
     user=User.current
 
     allowed_to_entity = true
@@ -82,11 +82,13 @@ module CustomTablesHelper
       end
       
       allowed_to_entity = false if entities.collect{|ent|
-        ent.workflow_rule_by_attribute.select {|attr, rule| rule != 'readonly'}.keys.size == 0 or ent.try(:issue).try(:closed?) # para não editar via página administrativa
+        if skip_workflow
+          ent.try(:issue).try(:closed?)
+        else
+          ent.workflow_rule_by_attribute.select {|attr, rule| rule != 'readonly'}.keys.size == 0 or ent.try(:issue).try(:closed?) # para não editar via página administrativa
+        end
       }.inject{|memo,b| memo|=b }
 
-      # allowed_to_entity = false if entity.workflow_rule_by_attribute.select {|attr, rule| rule != 'readonly'}.keys.size == 0
-      # allowed_to_entity = false if entity.try(:issue).try(:closed?) # página administrativa
     end
 
     allowed_to_entity = false if issue.try(:closed?) # @issue variable would disallow to view the table when the issue is closed.
