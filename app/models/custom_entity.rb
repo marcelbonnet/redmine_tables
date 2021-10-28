@@ -192,9 +192,9 @@ class CustomEntity < ActiveRecord::Base
       end
     end
     # @workflow_rule_by_attribute = result if user.nil?
-    field_ids = CustomEntityCustomField.all.pluck(:id).map(&:to_s)
+    # adds all optional "CustomEntityCustomField"s. 
+    field_ids = custom_field_ids.map(&:to_s)
     result.delete_if{|k,v| !field_ids.include?k}
-    # adds all optional "CustomEntityCustomField"s. ActiveRecord won't allow strange fields to be saved.
     field_ids.delete_if{|k,v| result.include?k}
     field_ids.map{|f| result[f]=""}
     result
