@@ -4,7 +4,7 @@
     <% query.add_short_filter('issue_id', "=#{issue.id}") %>
     <% back_url = issue_path(issue) %>
     <hr />
-    <% if is_user_allowed_to_table?(:add_table_row) %>
+    <% if is_user_allowed_to_table?(:add_table_row, issue:@issue) %>
       <div class="contextual">
         <%= link_to l(:button_add), new_custom_entity_path(
             custom_table_id: custom_table.id,

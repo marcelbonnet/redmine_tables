@@ -70,45 +70,60 @@ module CustomTablesHelper
   end
 
   # * permissions: one symbol or an array of symbols
-  def is_user_allowed_to_table?(permissions)
+  def is_user_allowed_to_table?(permissions, entity:nil, issue:nil)
     user=User.current
+
+    allowed_to_entity = true
+    if entity
+      if entity.is_a?Array
+        entities = CustomEntity.find(entity)
+      else
+        entities = Array(entity)
+      end
+      
+      allowed_to_entity = false if entities.collect{|ent|
+        ent.workflow_rule_by_attribute.select {|attr, rule| rule != 'readonly'}.keys.size == 0 or ent.try(:issue).try(:closed?) # para não editar via página administrativa
+      }.inject{|memo,b| memo|=b }
+
+      # allowed_to_entity = false if entity.workflow_rule_by_attribute.select {|attr, rule| rule != 'readonly'}.keys.size == 0
+      # allowed_to_entity = false if entity.try(:issue).try(:closed?) # página administrativa
+    end
+
+    allowed_to_entity = false if issue.try(:closed?) # @issue variable would disallow to view the table when the issue is closed.
+
     permissions = [permissions] unless permissions.is_a?(Array)
     permissions.collect{|perm|  
-      if try(:issue).try(:project).nil?
-        # FIXME se tabela não tiver projeto: 
-        # => qualquer role do usuário já serve
-        # => adicionar opção de role(s) para tabela que não tenha projeto
-        user.allowed_to?(perm, nil, global: true)
+      if @issue
+        user.allowed_to?(perm, @issue.project)
       else
-        user.allowed_to?(perm, issue.project)
+        user.allowed_to?(perm, nil, global: true) #TODO se usuário estiver no grupo autorizado para editar por fora
       end
-    }.inject{|memo,b| memo|=b }
+    }.inject{|memo,b| memo|=b } && allowed_to_entity
   end
 
   # return true if user matches any criteria to edit the object
-  def is_editable_to?
-    user=User.current
+  # def is_editable_to?(table)
+  #   user=User.current
+  #   # true se não tiver projeto. Se tiver, poderá ou não ser adicionada por uma issue!
+  #   if table.projects.size == 0
+  #     return true
+  #   else
+  #     return true #TODO se usuário estiver no grupo autorizado para editar por fora
+  #   end
 
-    if try(:issue).nil?
-      # true se não tiver projeto. Se tiver, poderá ou não ser adicionada por uma issue!
-      # return true if try(:issue).try(:project).nil?
-      if try(:projects).size == 0
-        return true
-      else
-        return true #TODO se usuário estiver no grupo autorizado para editar por fora
-      end
-    else
-      return false if workflow_rule_by_attribute.select {|attr, rule| rule != 'readonly'}.keys.size == 0
-      return true
-        # se tiver issue ...
-          # return false if todos cfs readonly
-          # return true
+  #   # if row
+  #   #   return false if workflow_rule_by_attribute.select {|attr, rule| rule != 'readonly'}.keys.size == 0
+  #   #   return true
+  #   # end
+  #   #     # se tiver issue ...
+  #   #       # return false if todos cfs readonly
+  #   #       # return true
         
-        # se não tiver issue ... (tem projeto, mas está sendo editada em outra view, sem issue)
-          # return true if se usuário está no grupo autorizado para editar por fora
-          # return false
-    end
+  #   #     # se não tiver issue ... (tem projeto, mas está sendo editada em outra view, sem issue)
+  #   #       # return true if se usuário está no grupo autorizado para editar por fora
+  #   #       # return false
 
-  end
+  #   # return false # defaults to false
+  # end
 
 end

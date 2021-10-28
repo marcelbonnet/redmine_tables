@@ -211,6 +211,8 @@ class CustomEntitiesController < ApplicationController
   def destroy
     raise Unauthorized unless is_user_allowed_to_table?(:delete_table_row)
 
+    raise Unauthorized if Array(@custom_entities).any?{|entity| entity.issue.closed?}
+
     custom_table = @custom_entities.first.custom_table
     @custom_entities.destroy_all
 

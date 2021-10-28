@@ -25,10 +25,10 @@
             <% if User.current.admin? %>
               <%= link_to l(:button_show), custom_entity_path(entity), title: l(:button_show), class: 'icon-only icon-magnifier' %>
             <% end %>
-            <% if is_user_allowed_to_table?([:edit_table_row]) %>
+            <% if is_user_allowed_to_table?([:edit_table_row], entity: entity) %>
               <%= link_to l(:button_edit), edit_custom_entity_path(entity, edit_query: true, back_url: back_url), remote: true, title: l(:button_edit), class: 'icon-only icon-edit' %>
             <% end %>
-            <% if is_user_allowed_to_table?([:delete_table_row]) %>
+            <% if is_user_allowed_to_table?([:delete_table_row], entity: entity) %>
               <%= link_to l(:button_delete), custom_entity_path(entity, custom_table_id: custom_table, back_url: back_url), data: {confirm: l(:text_are_you_sure)}, method: :delete, title: l(:button_delete), class: 'icon-only icon-del' %>
             <% end %>
           </td>
