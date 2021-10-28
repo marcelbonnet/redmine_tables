@@ -135,7 +135,7 @@ class CustomEntity < ActiveRecord::Base
   # Returns a hash of the workflow rule by attribute for the given user
   #
   # Examples:
-  #   custom_entity.workflow_rule_by_attribute # => {'due_date' => 'required', 'start_date' => 'readonly'}
+  #   custom_entity.workflow_rule_by_attribute # => {'123' => 'required', '124' => 'readonly', '125' => ''}
   def workflow_rule_by_attribute(user=nil)
     # return @workflow_rule_by_attribute if @workflow_rule_by_attribute && user.nil?
     user_real = user || User.current
@@ -192,7 +192,12 @@ class CustomEntity < ActiveRecord::Base
       end
     end
     # @workflow_rule_by_attribute = result if user.nil?
-    result.delete_if{|k,v| !CustomEntityCustomField.all.pluck(:id).map(&:to_s).include?k}
+    field_ids = CustomEntityCustomField.all.pluck(:id).map(&:to_s)
+    result.delete_if{|k,v| !field_ids.include?k}
+    # adds all optional "CustomEntityCustomField"s. ActiveRecord won't allow strange fields to be saved.
+    field_ids.delete_if{|k,v| result.include?k}
+    field_ids.map{|f| result[f]=""}
+    result
   end
   # private :workflow_rule_by_attribute
 
