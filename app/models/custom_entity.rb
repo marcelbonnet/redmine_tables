@@ -131,67 +131,6 @@ class CustomEntity < ActiveRecord::Base
     end
   end
 
-  # TODO limpeza: remover método validate_unwriteable_fields se não for mesmo necessário
-  # # Validates the fields against "readonly" workflow requirements.
-  # def validate_unwriteable_fields
-  #   # ignore if there is no project to get the user Roles
-  #   return if self.try(:issue).try(:project).nil?
-
-  #   user = new_record? ? author : current_journal.try(:user)
-  #   readonly_attribute_names(user).each do |attribute|
-  #     attribute = attribute.to_i
-  #     v = custom_field_values.detect {|v| v.custom_field_id == attribute}
-  #     if v && Array(v.value).detect(&:present?)
-  #       # binding.pry
-  #       # esses campos estão no params? talvez devam ser marcados como unsafe
-  #       # eu preciso coibir o envio desses campos RO pelo params/robot, api...
-  #       # mas a view também está disparando erro quando chega nesse método
-  #       #   ver que params a view está mandando
-  #       # o controlador não deve carregar o custom value que não pode ser editado, assim ele virá vazio. Qualquer valor aqui será persistido no save... Nem sei se o valor que está aqui veio do objeto ou do request?
-  #       errors.add(v.custom_field.name, l('activerecord.errors.messages.readonly_cf'))
-  #     end
-  #   end
-  # end
-
-  # TODO limpeza: remover método validate_permissions se não for mesmo necessário
-  # def validate_permissions
-  #   binding.pry
-  #   trackers = allowed_target_trackers(User.current)
-  #   unless trackers.nil? 
-  #     unless trackers.include?(self.try(:issue).try(:tracker))
-  #       errors.add :tracker, :invalid
-  #     end
-  #   end
-  # end
-
-  # TODO limpeza: remover método
-  # # Returns a scope of trackers that user can assign the issue to
-  # def allowed_target_trackers(user=User.current)
-  #   self.class.allowed_target_trackers(issue, user, issue.tracker_id_was) unless self.try(:issue).nil?
-  # end
-
-  # TODO limpeza: remover método
-  # # Returns a scope of trackers that user can assign project issues to
-  # def self.allowed_target_trackers(issue, user=User.current, current_tracker=nil)
-  #   if issue.project
-  #     scope = issue.project.trackers.sorted
-  #     unless user.admin?
-  #       roles = user.roles_for_project(issue.project).select {|r| r.has_permission?(:manage_custom_tables)}
-  #       unless roles.any? {|r| r.permissions_all_trackers?(:manage_custom_tables)}
-  #         tracker_ids = roles.map {|r| r.permissions_tracker_ids(:manage_custom_tables)}.flatten.uniq
-  #         if current_tracker
-  #           tracker_ids << current_tracker
-  #         end
-  #         scope = scope.where(:id => tracker_ids)
-  #       end
-  #     end
-  #     scope
-  #   else
-  #     Tracker.none
-  #   end
-  # end
-
-  
 
   # Returns a hash of the workflow rule by attribute for the given user
   #
