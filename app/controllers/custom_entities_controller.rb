@@ -262,12 +262,11 @@ class CustomEntitiesController < ApplicationController
     raise Unauthorized unless is_user_allowed_to_table?(:table_bulk_edit)
     
     unsaved, saved = [], []
-    # attributes = parse_params_for_bulk_update(params[:custom_entity])
+    action_parameters = parse_params_for_bulk_update(params[:custom_entity])
     
     @custom_entities.each do |custom_entity|
       custom_entity.init_journal(User.current)
-      # custom_entity.safe_attributes = attributes
-      custom_entity.safe_attributes = attributes.dup.permit("custom_field_values": (custom_entity.custom_field_values.collect{|o| o.custom_field_id} - custom_entity.readonly_attribute_names.map(&:to_i)).map(&:to_s))
+      custom_entity.safe_attributes = action_parameters.dup.permit("custom_field_values": (custom_entity.custom_field_values.collect{|o| o.custom_field_id} - custom_entity.readonly_attribute_names.map(&:to_i)).map(&:to_s))
       if custom_entity.save
         saved << custom_entity
       else
