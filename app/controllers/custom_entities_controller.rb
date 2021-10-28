@@ -241,7 +241,6 @@ class CustomEntitiesController < ApplicationController
     end
     @custom_entity_ids = @custom_entities.map(&:id).sort
 
-    # FIXME incluir verificação no workflow
     can_edit = @custom_entities.detect{|c| !c.editable?}.nil?
     can_delete = @custom_entities.detect{|c| !c.deletable?}.nil?
     @can = {:edit => can_edit, :delete => can_delete}

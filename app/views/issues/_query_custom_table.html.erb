@@ -21,7 +21,6 @@
           <td class="checkbox hide-when-print"><%= check_box_tag("ids[]", entity.id, false, id: nil) %></td>
           <%= raw query.inline_columns.map {|column| "<td class=\"#{column.css_classes}\">#{column_content(column, entity)}</td>"}.join %>
           <td class="buttons">
-            <%# TODO o show ainda é restrito ao admin%>
             <% if is_user_allowed_to_table?(:view_table_rows) %>
               <%= link_to l(:button_show), custom_entity_path(entity), title: l(:button_show), class: 'icon-only icon-magnifier' %>
             <% end %>

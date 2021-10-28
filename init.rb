@@ -11,20 +11,6 @@ Redmine::Plugin.register :redmine_cw_custom_tables do
   url 'https://github.com/marcelbonnet/redmine_cw_custom_tables'
   author_url 'https://github.com/marcelbonnet'
 
-
-  # TODO remove permission
-  ActiveSupport::Deprecation.warn("permission :manage_custom_tables will be removed")
-  permission :manage_custom_tables, {
-      custom_entities: [:new, :edit, :create, :update, :destroy, :context_menu, :bulk_edit, :bulk_update, :upload],
-      custom_tables: [:csv_example],
-  }
-
-  # TODO remove permission
-  ActiveSupport::Deprecation.warn("permission :view_custom_tables will be removed")
-  permission :view_custom_tables, {
-    custom_entities: [:show],
-  }
-
   permission :view_table_rows, {
     custom_entities: [:show, :context_menu],
   }
@@ -44,11 +30,6 @@ Redmine::Plugin.register :redmine_cw_custom_tables do
   permission :upload_csv_to_table, {
       custom_entities: [:new, :create, :upload],
       custom_tables: [:csv_example],
-  }
-
-  # FIXME acho que não usei em lugar nenhum essa permissão
-  permission :table_context_menu, {
-      custom_entities: [:context_menu],
   }
 
   permission :table_bulk_edit, {

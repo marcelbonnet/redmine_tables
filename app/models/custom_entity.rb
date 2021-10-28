@@ -22,21 +22,6 @@ class CustomEntity < ActiveRecord::Base
 
   validate :validate_required_fields
 
-  # TODO limpeza: remover lambda se não for necessário
-  # validate lambda {
-  #   # custom_values()
-  #   # if new_record? || custom_field_values_changed?
-  #   #         custom_field_values.each(&:validate_value)
-  #   #       end
-  #   # errors.add(:base, 'Must be friends to leave a comment') 
-  #   # required_attribute?
-  #   errors.add(CustomEntityCustomField.last.name, 'teste de erro') 
-  # }
-
-  # TODO limpeza: remover
-  # validates_each :first_name, :last_name do |record, attr, value|
-  #   record.errors.add attr, 'starts with z.' if value.to_s[0] == ?z
-  # end
 
   def name
     if new_record?
@@ -137,7 +122,6 @@ class CustomEntity < ActiveRecord::Base
   # Examples:
   #   custom_entity.workflow_rule_by_attribute # => {'123' => 'required', '124' => 'readonly', '125' => ''}
   def workflow_rule_by_attribute(user=nil)
-    # return @workflow_rule_by_attribute if @workflow_rule_by_attribute && user.nil?
     user_real = user || User.current
     roles = user_real.admin ? Role.all.to_a : user_real.roles_for_project(issue.project)
     roles = roles.select(&:consider_workflow?)
@@ -191,7 +175,6 @@ class CustomEntity < ActiveRecord::Base
         end
       end
     end
-    # @workflow_rule_by_attribute = result if user.nil?
     # adds all optional "CustomEntityCustomField"s. 
     field_ids = custom_field_ids.map(&:to_s)
     result.delete_if{|k,v| !field_ids.include?k}
@@ -199,11 +182,6 @@ class CustomEntity < ActiveRecord::Base
     field_ids.map{|f| result[f]=""}
     result
   end
-  # private :workflow_rule_by_attribute
-
-  # def attribute_names_by_workflow_rule(user=nil)
-  #   workflow_rule_by_attribute(user).select {|attr, rule| rule != 'readonly'}.keys
-  # end
 
   # Returns the names of required attributes for user or the current user
   # For users with multiple roles, the required fields are the intersection of

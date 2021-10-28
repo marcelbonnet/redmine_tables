@@ -1,18 +1,5 @@
 module CustomTablesHelper
 
-  # FIXME não é usado
-  def render_setting_tabs(tabs, selected=params[:tab], locals = {})
-    if tabs.any?
-      unless tabs.detect {|tab| tab[:name] == selected}
-        selected = nil
-      end
-      selected ||= tabs.first[:name]
-      render :partial => 'common/tabs', :locals => {:tabs => tabs, :selected_tab => selected}.merge(locals)
-    else
-      content_tag 'p', l(:label_no_data), :class => "nodata"
-    end
-  end
-
   # usado em views/custom_tables/index.html.erb
   def render_custom_table_content(column, entity)
     value = column.value_object(entity)
@@ -27,7 +14,6 @@ module CustomTablesHelper
     end
   end
 
-  # FIXME não é usado
   def custom_table_column_value(column, entity, value)
     case column.name
     when :name
@@ -37,7 +23,6 @@ module CustomTablesHelper
     end
   end
 
-  # FIXME não é usado
   def custom_entity_column_value(column, custom_entity, custom_value)
     return format_object(custom_value) unless custom_value.is_a? CustomValue
     value = custom_value.value
@@ -103,29 +88,6 @@ module CustomTablesHelper
     }.inject{|memo,b| memo|=b } && allowed_to_entity
   end
 
-  # return true if user matches any criteria to edit the object
-  # def is_editable_to?(table)
-  #   user=User.current
-  #   # true se não tiver projeto. Se tiver, poderá ou não ser adicionada por uma issue!
-  #   if table.projects.size == 0
-  #     return true
-  #   else
-  #     return true #TODO se usuário estiver no grupo autorizado para editar por fora
-  #   end
-
-  #   # if row
-  #   #   return false if workflow_rule_by_attribute.select {|attr, rule| rule != 'readonly'}.keys.size == 0
-  #   #   return true
-  #   # end
-  #   #     # se tiver issue ...
-  #   #       # return false if todos cfs readonly
-  #   #       # return true
-        
-  #   #     # se não tiver issue ... (tem projeto, mas está sendo editada em outra view, sem issue)
-  #   #       # return true if se usuário está no grupo autorizado para editar por fora
-  #   #       # return false
-
-  #   # return false # defaults to false
-  # end
+  
 
 end

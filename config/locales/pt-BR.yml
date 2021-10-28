@@ -51,7 +51,6 @@ pt-BR:
   permission_edit_table_row: "Editar linha de tabela"
   permission_delete_table_row: "Remover linha de tabela"
   permission_upload_csv_to_table: "Subir arquivo csv em tabela"
-  permission_table_context_menu: "Menu de contexto de tabela"
   permission_table_bulk_edit: "Edição em lote de tabela"
 
   label_table_workflow: "Fluxo de trabalho de tabelas"

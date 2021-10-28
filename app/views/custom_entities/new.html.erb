@@ -28,7 +28,6 @@ issue_id = params[:issue_id] || params[:custom_entity][:issue_id] || @custom_ent
         <%= f.hidden_field :custom_table_id, value: custom_table_id %>
         
         <%= f.hidden_field :issue_id, value: issue_id %>
-        <%#FIXME o button só deve ser exibido se houver algo para editar/permitido para editar. Ele é exibido até quando todos os campos são RO (form vazio)%>
         <%= submit_tag l(:button_save) %>
     <% end %>
 <% end %>
