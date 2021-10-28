@@ -47,14 +47,14 @@ class CustomEntity < ActiveRecord::Base
     end
   end
 
-  # FIXME mover a função do helper para cá?
+  # TODO should use CustomTableHelper::is_user_allowed_to_table?
   def editable?(user = User.current)
     return true if user.admin? || custom_table.is_for_all
     user.allowed_to?(:edit_issues, issue.project)
   end
 
   def visible?(user = User.current)
-    user.allowed_to?(:view_and_manage_entities, nil, global: true)
+    user.allowed_to?(:view_table_rows, nil, global: true)
   end
 
   def deletable?(user = nil)
