@@ -55,6 +55,9 @@ module CustomTablesHelper
   end
 
   # * permissions: one symbol or an array of symbols
+  # * entity: object or array
+  # * issue: issue to check status
+  # * skip_workflow: true|false. Skips workflow rules and focus on issue status (closed or not) and user's permissions
   def is_user_allowed_to_table?(permissions, entity:nil, issue:nil, skip_workflow:false)
     user=User.current
 
