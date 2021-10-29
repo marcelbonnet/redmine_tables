@@ -13,6 +13,7 @@ Redmine::Plugin.register :redmine_cw_custom_tables do
 
   permission :view_table_rows, {
     custom_entities: [:show, :context_menu],
+    custom_tables: [:show]
   }
 
   permission :add_table_row, {
