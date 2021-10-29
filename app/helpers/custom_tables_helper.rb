@@ -91,6 +91,10 @@ module CustomTablesHelper
     }.inject{|memo,b| memo|=b } && allowed_to_entity
   end
 
-  
+  # helper to change the behavior of an icon depending on issue status for an admin user
+  def admin_icon(selector, entity)
+    selector << "-admin" if User.current.admin? && entity.try(:issue).try(:closed?)
+    selector
+  end
 
 end

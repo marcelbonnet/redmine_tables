@@ -39,3 +39,7 @@
       </p>
   <% end %>
 </div>
+
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'tables', plugin: 'redmine_cw_custom_tables' %>
+<% end %>
