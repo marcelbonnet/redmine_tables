@@ -193,14 +193,17 @@ class CustomEntity < ActiveRecord::Base
 
   # Returns true if the attribute is required for user
   def required_attribute?(name, user=nil)
+    return false if issue.nil? 
     required_attribute_names(user).include?(name.to_s)
   end
 
   def readonly_attribute_names(user=nil)
+    return [] if issue.nil? 
     workflow_rule_by_attribute(user).select {|attr, rule| rule == 'readonly'}.keys
   end
 
   def readonly_attribute?(name, user=nil)
+    return false if issue.nil?
     readonly_attribute_names(user).include?(name.to_s)
   end
 
