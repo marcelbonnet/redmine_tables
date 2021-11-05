@@ -45,11 +45,11 @@
                     <%= link_to l(:button_show), custom_entity_path(entity), title: l(:button_show), class: 'icon-only icon-magnifier' %>
                     
                     <% if is_user_allowed_to_table?([:edit_table_row], entity:(User.current.admin?? nil : entity)) %>
-                    <%= link_to l(:button_edit), edit_custom_entity_path(entity, edit_query: true, back_url: back_url), remote: true, title: l(:button_edit), class: 'icon-only '<< admin_icon('icon-edit', entity) %>
+                    <%= link_to l(:button_edit), edit_custom_entity_path(entity, edit_query: true, back_url: back_url), remote: true, title: admin_l(:button_edit, :admin_button_edit, entity), class: 'icon-only '<< admin_icon('icon-edit', entity) %>
                     <% end %>
 
                     <% if true %>
-                    <%= link_to l(:button_delete), custom_entity_path(entity, custom_table_id: @custom_table, project_id: params[:project_id], back_url: back_url), data: {confirm: l(:text_are_you_sure)}, method: :delete, title: l(:button_delete), class: 'icon-only '<< admin_icon('icon-del', entity) %>
+                    <%= link_to l(:button_delete), custom_entity_path(entity, custom_table_id: @custom_table, project_id: params[:project_id], back_url: back_url), data: {confirm: admin_l(:text_are_you_sure, :admin_text_are_you_sure, entity)}, method: :delete, title: admin_l(:button_delete, :admin_button_delete, entity), class: 'icon-only '<< admin_icon('icon-del', entity) %>
                     <% end %>
               </td>
             </tr>
