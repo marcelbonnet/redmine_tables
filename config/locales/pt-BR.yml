@@ -21,7 +21,8 @@ pt-BR:
   label_new_column: Nova coluna
   label_all_tables: Todas as tabelas
   help_please_configure_table_first: Não há campos personalizados nesta tabela.  %{settings}
-  label_add: Add
+  label_add: Adicionar
+  label_add_table: Adicionar tabela
   button_new_comment: Novo comentário
   label_new_note: Novo comentário
   field_external_name: Nome externo (API/ArquivoCSV)
@@ -32,26 +33,32 @@ pt-BR:
 
   custom_tables:
     csv:
-        line: "Linha número #%{line}"
-    file_upload: "Subir arquivo CSV"
-    file_upload_instructions: "O arquivo CSV deve ser codificado como ISO8859-1 ou UTF-8. Pode ter as colunas em qualquer ordem. O CSV deve ter cabeçalho, usando os nomes de colunas do arquivo de exemplo."
-    example_file: "Arquivo de exemplo"
-    button_upload: "Carregar CSV"
+        line: Linha número #%{line}
+    file_upload: Subir arquivo CSV
+    file_upload_instructions: O arquivo CSV deve ser codificado como ISO8859-1 ou UTF-8. Pode ter as colunas em qualquer ordem. O CSV deve ter cabeçalho, usando os nomes de colunas do arquivo de exemplo.
+    example_file: Arquivo de exemplo
+    button_upload: Carregar CSV
 
   missing_permission_view_table_rows: Sem permissão para ver linhas de tabelas
 
   activerecord:
     errors:
       messages:
-        readonly_cf: "Campo personalizado \"somente leitura\""
-        readonly_fields: "Todos os campos são \"somente leitura\""
+        readonly_cf: Campo personalizado "somente leitura"
+        readonly_fields: Todos os campos são "somente leitura"
 
-  permission_view_table_rows: "Ver linhas de tabelas"
-  permission_add_table_row: "Adicionar linha em tabela"
-  permission_edit_table_row: "Editar linha de tabela"
-  permission_delete_table_row: "Remover linha de tabela"
-  permission_upload_csv_to_table: "Subir arquivo csv em tabela"
-  permission_table_bulk_edit: "Edição em lote de tabela"
+  permission_view_table_rows: Ver linhas de tabelas
+  permission_add_table_row: Adicionar linha em tabela
+  permission_edit_table_row: Editar linha de tabela
+  permission_delete_table_row: Remover linha de tabela
+  permission_upload_csv_to_table: Subir arquivo csv em tabela
+  permission_table_bulk_edit: Edição em lote de tabela
 
-  label_table_workflow: "Fluxo de trabalho de tabelas"
-  label_custom_entity_custom_field: "Campo personalizado de tabela"
+  label_table_workflow: Fluxo de trabalho de tabelas
+  label_custom_entity_custom_field: Campo personalizado de tabela
+
+  admin_text_are_you_sure: Você tem certeza de prosseguir numa ação proibida ao usuário comum? Você vai violar o fluxo de trabalho.
+  admin_button_edit: Editar registro violando o fluxo de trabalho de usuário comum
+  admin_button_delete: Remover registro violando o fluxo de trabalho de usuário comum
+  label_entity_header: Relacionada com
+  label_entity_row: Item
