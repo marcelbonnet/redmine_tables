@@ -14,6 +14,14 @@
           [@custom_entity.custom_table.name, custom_table_path(@custom_entity.custom_table)],
           @custom_entity.name %>
 
+<h2 class="inline-flex"><%= entity_heading %></h2>
+<% if !@custom_entity.issue.nil? && Redmine::VERSION::MAJOR >= 4 %>
+  <%= issue_status_type_badge(@custom_entity.issue.status) %>
+  <% if @custom_entity.issue.is_private? %>
+    <span class="badge badge-private private"><%= l(:field_is_private) %></span>
+  <% end %>
+<% end %>
+
 <div class="issue details">
 
   <p class="author">

@@ -25,4 +25,17 @@ module CustomEntitiesHelper
     api.issue_id custom_entity.issue_id
     api.custom_table_id custom_entity.custom_table_id
   end
+
+  def entity_heading()
+    if @custom_entity.issue.nil?
+      field_id = @custom_entity.custom_table.settings["main_custom_field_id"].try(:to_i)
+      value = ""
+      unless field_id.nil?
+        value << " - " << @custom_entity.custom_field_value(field_id)
+      end
+      return h("#{l(:label_entity_row)} ##{@custom_entity.id} #{value}")
+    else
+      return h("#{l(:label_entity_header)} #{@custom_entity.issue.tracker} ##{@custom_entity.issue.id}")
+   end
+  end
 end
