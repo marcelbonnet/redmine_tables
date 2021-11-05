@@ -1,0 +1,43 @@
+<% memberships = @group.table_memberships.preload(:table_member_roles, :roles).order("custom_tables.name": :asc).to_a %>
+
+<p>
+	FIXME: modal: Tabela(s) + Papéis
+<%= link_to l(:label_add_table), new_principal_membership_path(@group), :remote => true, :class => "icon icon-add" %>
+	
+</p>
+
+<% if memberships.any? %>
+<table class="list memberships">
+  <thead>
+  	<tr>
+	    <th><%= l(:label_table) %></th>
+	    <th><%= l(:label_role_plural) %></th>
+  	</tr>
+  </thead>
+  <tbody>
+  <% memberships.each do |membership| %>
+  <% next if membership.new_record? %>
+  <tr id="member-<%= membership.id %>" class="class">
+  <td class="project name">
+    <%= link_to membership.custom_table.name, edit_custom_table_path(membership.custom_table) %>
+  </td>
+  <td class="roles">
+    <span id="member-<%= membership.id %>-roles"><%=h membership.roles.sort.collect(&:to_s).join(', ') %></span>
+    <div id="member-<%= membership.id %>-form"></div>
+  </td>
+  <td class="buttons">
+  	FIXME: trocar os paths dos links: o edit retorna os Roles com checkboxes. Precisa ser ajustado na herança, talvez?
+      <%= link_to l(:button_edit),
+                  edit_principal_membership_path(@group, membership),
+                  :remote => true,
+                  :class => 'icon icon-edit'
+          %>
+      <%= delete_link principal_membership_path(@group, membership), :remote => true %>
+  </td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+<% else %>
+<p class="nodata"><%= l(:label_no_data) %></p>
+<% end %>

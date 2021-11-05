@@ -1,6 +1,11 @@
 class CustomTable < ActiveRecord::Base
   include Redmine::SafeAttributes
 
+  # CustomTable statuses
+  STATUS_ACTIVE     = 1
+  STATUS_CLOSED     = 5
+  STATUS_ARCHIVED   = 9
+
   belongs_to :author, class_name: 'User', foreign_key: 'author_id'
   has_many :custom_fields, dependent: :destroy
   has_many :custom_entities, dependent: :destroy
@@ -23,6 +28,11 @@ class CustomTable < ActiveRecord::Base
     end
   }
 
+  scope :active, lambda { where(:status => STATUS_ACTIVE) }
+  scope :status, lambda {|arg| where(arg.blank? ? nil : {:status => arg.to_i})}
+  # TODO public table, allowing public view + add|edit|remove ?
+
+  # The table is visible to any user or only to user with the selected Roles, when related to an Issue + Tracker
   scope :visible, lambda {|*args|
     user = args.shift || User.current
     if user.admin?
