@@ -97,4 +97,10 @@ module CustomTablesHelper
     selector
   end
 
+  def admin_l(user_label, admin_label, entity)
+    label = l(user_label)
+    label = l(admin_label) if User.current.admin? && entity.try(:issue).try(:closed?)
+    label
+  end
+
 end
