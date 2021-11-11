@@ -2,9 +2,9 @@
 # See: http://guides.rubyonrails.org/routing.html
 
 # static routes must be declared first
-match '/custom_tables/permissions/workflows', :to => 'table_permissions#index', :via => :get
-match '/custom_tables/permissions', :to => 'table_permissions#permissions', :via => [:get, :post]
-match '/custom_tables/permissions/copy', :to => 'table_permissions#copy', :via => [:get, :post]
+# match '/custom_tables/permissions/workflows', :to => 'table_permissions#index', :via => :get
+match '/custom_tables/workflows/permissions', :to => 'table_workflow_permissions#permissions', :via => [:get, :post]
+match '/custom_tables/workflows/permissions/copy', :to => 'table_workflow_permissions#copy', :via => [:get, :post]
 
 resources :custom_tables
 resources :custom_tables do

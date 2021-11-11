@@ -1,4 +1,4 @@
-class TablePermissionsController < ApplicationController
+class TableWorkflowPermissionsController < ApplicationController
   layout 'admin'
   self.main_menu = false
 
@@ -16,7 +16,7 @@ class TablePermissionsController < ApplicationController
       end
       WorkflowPermission.replace_permissions(@trackers, @roles, permissions)
       flash[:notice] = l(:notice_successful_update)
-      redirect_to_referer_or custom_tables_permissions_path
+      redirect_to_referer_or custom_tables_workflows_permissions_path
       return
     end
 
@@ -63,7 +63,7 @@ class TablePermissionsController < ApplicationController
         WorkflowRule.copy(@source_tracker, @source_role, @target_trackers, @target_roles)
         flash[:notice] = l(:notice_successful_update)
         redirect_to(
-          custom_tables_permissions_copy_path(:source_tracker_id => @source_tracker,
+          custom_tables_workflows_permissions_copy_path(:source_tracker_id => @source_tracker,
                               :source_role_id => @source_role)
         )
       end
