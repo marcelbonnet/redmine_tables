@@ -8,12 +8,14 @@ match '/custom_tables/workflows/permissions/copy', :to => 'table_workflow_permis
 
 resources :custom_tables
 resources :custom_tables do
-  # testar essa rota debaixo de :groups
-  resources :memberships, :controller => 'table_memberships'
   collection do
     get :context_menu
     get '/:id/csv/example', to: 'custom_tables#csv_example', as: :csv_example, defaults: { format: 'csv' }
   end
+end
+
+resources :groups do
+  resources :table_memberships, :controller => 'table_memberships'
 end
 
 resources :table_fields

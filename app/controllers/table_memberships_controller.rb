@@ -15,7 +15,7 @@ class TableMembershipsController < ApplicationController
   def find_membership
     begin
       @membership = TableMember.find(params[:id])
-      @group = Group.find(params[:custom_table_id]) # na verdade é group_id
+      @group = Group.find(params[:group_id])
     rescue ActiveRecord::RecordNotFound
       render_404
     end

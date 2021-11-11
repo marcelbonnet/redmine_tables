@@ -1,4 +1,4 @@
-<%= form_for(@membership, :url => custom_table_membership_path(@group, @membership),
+<%= form_for(@membership, :url => group_table_membership_path(@group, @membership),
                           :as => :membership,
                           :remote => request.xhr?,
                           :method => :put) do %>
