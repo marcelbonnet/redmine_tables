@@ -8,7 +8,7 @@ module CustomTables
 
 				def group_settings_tabs(group)
 			    tabs = super(group)
-			    tabs << {:name => 'table_memberships', :partial => 'table_permissions/tab_group_edit', :label => :label_custom_tables}
+			    tabs << {:name => 'table_memberships', :partial => 'table_memberships/tab_group_edit', :label => :label_custom_tables}
 			    tabs
 			  end
 			end
