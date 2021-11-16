@@ -16,6 +16,12 @@ module CustomTables
 							:foreign_key => "user_id"
 					end
 				end
+
+				# Returns true if the group is a member of table
+			  def member_of_table?(table)
+			    table.is_a?(CustomTable) && table_member_ids.include?(table.id)
+			  end
+
 			end
 
 			# module Prepend extend ActiveSupport::Concern

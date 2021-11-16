@@ -62,3 +62,4 @@ pt-BR:
   admin_button_delete: Remover registro violando o fluxo de trabalho de usuário comum
   label_entity_header: Relacionada com
   label_entity_row: Item
+  notice_failed_to_save_table_members: "Falha ao salvar membro(s) de tabela(s): %{errors}."

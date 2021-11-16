@@ -1,0 +1,25 @@
+<fieldset class="box">
+  <legend><%= toggle_checkboxes_link('.projects-selection input:enabled') %><%= l(:label_custom_table) %></legend>
+  <div class="objects-selection">
+    <div class="projects-selection">
+      <%#TODO application_helper#render_project_nested_lists : usar como exemplo para fazer a lista de tabelas aninhadas %>
+    <% @tables.each do |table| %>
+      <label>
+        <%= check_box_tag('membership[table_member_ids][]', table.id, false, :id => nil, :disabled => @group.member_of_table?(table)) %> <%= table.name %>
+      </label>
+    <% end %>
+    </div>
+  </div>
+</fieldset>
+
+<fieldset class="box">
+  <legend><%= toggle_checkboxes_link('.roles-selection input') %><%= l(:label_role_plural) %></legend>
+  <div class="roles-selection">
+  <% @roles.each do |role| %>
+    <label>
+      <%= check_box_tag 'membership[role_ids][]', role.id, false, :id => nil %>
+      <%= role %>
+    </label>
+  <% end %>
+  </div>
+</fieldset>

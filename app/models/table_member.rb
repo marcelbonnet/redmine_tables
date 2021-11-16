@@ -171,7 +171,7 @@ class TableMember < ActiveRecord::Base
   def self.create_table_memberships(principal, attributes)
     table_members = []
     if attributes
-      table_ids = Array.wrap(attributes[:table_ids] || attributes[:table_id])
+      table_ids = Array.wrap(attributes[:table_member_ids] || attributes[:table_member_id])
       role_ids = Array.wrap(attributes[:role_ids])
       table_ids.each do |table_id|
         table_member = TableMember.find_or_new(table_id, principal)

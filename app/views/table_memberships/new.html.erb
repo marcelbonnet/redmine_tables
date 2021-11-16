@@ -1,0 +1,6 @@
+<h2><%= l(:label_add_table) %></h2>
+
+<%= form_for :membership, :url => group_table_membership_path(@group), :method => :post do |f| %>
+  <%= render :partial => 'new_form' %>
+  <p><%= submit_tag l(:button_add), :name => nil %></p>
+<% end %>
