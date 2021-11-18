@@ -33,7 +33,7 @@ class CustomEntitiesController < ApplicationController
   end
 
   def show
-    raise Unauthorized unless is_user_allowed_to_table?(:view_table_rows)
+    raise Unauthorized unless is_user_allowed_to_table?(:view_table_rows, table: @custom_entity.custom_table)
 
     @queries_scope = []
     respond_to do |format|
@@ -45,7 +45,7 @@ class CustomEntitiesController < ApplicationController
   end
 
   def new
-    raise Unauthorized unless is_user_allowed_to_table?(:add_table_row)
+    raise Unauthorized unless is_user_allowed_to_table?(:add_table_row, table: params["custom_table_id"])
 
     params.permit(["custom_table_id","issue_id","controller","action","back_url"])
     @custom_entity = CustomEntity.new
@@ -70,9 +70,10 @@ class CustomEntitiesController < ApplicationController
 
   def create
     raise Unauthorized unless is_user_allowed_to_table?(:add_table_row)
-
     params.permit(["custom_entity","issue_id","controller","action","back_url"])
     raise Unauthorized unless params.require("custom_entity")
+    raise Unauthorized unless is_user_allowed_to_table?(:add_table_row, table: params[:custom_entity][:custom_table_id])
+
     @custom_entity = CustomEntity.new(author: User.current, custom_table_id: params[:custom_entity][:custom_table_id], issue_id: params[:custom_entity][:issue_id])
     @custom_entity.safe_attributes = parametrize_allowed_attributes
     # @custom_entity.issue_id = params[:issue_id] || params[:custom_entity][:issue_id]
@@ -96,7 +97,7 @@ class CustomEntitiesController < ApplicationController
   # TODO test with API
   # FIXME CSV should consider setting's locale (decimal, date...): try lib/redmine/export/csv.rb: include Redmine::I18n ; @decimal_separator ||= l(:general_csv_decimal_separator)              ("%.2f" % field).gsub('.', @decimal_separator)
   def upload
-    raise Unauthorized unless is_user_allowed_to_table?(:upload_csv_to_table)
+    raise Unauthorized unless is_user_allowed_to_table?(:upload_csv_to_table, table: params[:custom_table_id])
 
     base_ce = CustomEntity.new(author: User.current, custom_table_id: params[:custom_table_id], issue_id: params[:custom_entity][:issue_id])
     # TODO: attach to issue, process and delete (or delete if true in plugin settings)
@@ -177,7 +178,7 @@ class CustomEntitiesController < ApplicationController
   end #upload
 
   def edit
-    raise Unauthorized unless is_user_allowed_to_table?(:edit_table_row)
+    raise Unauthorized unless is_user_allowed_to_table?(:edit_table_row, table: @custom_entity.custom_table)
 
     @tab = @custom_entity.custom_table.name
     respond_to do |format|
@@ -187,7 +188,7 @@ class CustomEntitiesController < ApplicationController
   end
 
   def update
-    raise Unauthorized unless is_user_allowed_to_table?(:edit_table_row)
+    raise Unauthorized unless is_user_allowed_to_table?(:edit_table_row, table: @custom_entity.custom_table)
 
     @custom_entity.init_journal(User.current)
     @custom_entity.safe_attributes = parametrize_allowed_attributes
@@ -209,9 +210,10 @@ class CustomEntitiesController < ApplicationController
   end
 
   def destroy
-    raise Unauthorized unless is_user_allowed_to_table?(:delete_table_row)
-
-    raise Unauthorized if Array(@custom_entities).any?{|entity| entity.issue.closed?}
+    @custom_entities.pluck(:custom_table_id).uniq.each do |table_id|
+      raise Unauthorized unless is_user_allowed_to_table?(:delete_table_row, table: table_id)
+    end
+    raise Unauthorized if Array(@custom_entities).any?{|entity| entity.issue.try(:closed?)}
 
     custom_table = @custom_entities.first.custom_table
     @custom_entities.destroy_all
@@ -252,13 +254,17 @@ class CustomEntitiesController < ApplicationController
   end
 
   def bulk_edit
-    raise Unauthorized unless is_user_allowed_to_table?(:table_bulk_edit)
+    @custom_entities.pluck(:custom_table_id).uniq.each do |table_id|
+      raise Unauthorized unless is_user_allowed_to_table?(:table_bulk_edit, table: table_id)
+    end
 
     @custom_fields = @custom_entities.map { |c| c.available_custom_fields }.reduce(:&).uniq
   end
 
   def bulk_update
-    raise Unauthorized unless is_user_allowed_to_table?(:table_bulk_edit)
+    @custom_entities.pluck(:custom_table_id).uniq.each do |table_id|
+      raise Unauthorized unless is_user_allowed_to_table?(:table_bulk_edit, table: table_id)
+    end
     
     unsaved, saved = [], []
     action_parameters = parse_params_for_bulk_update(params[:custom_entity])

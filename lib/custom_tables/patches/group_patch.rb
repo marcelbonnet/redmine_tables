@@ -22,6 +22,36 @@ module CustomTables
 			    table.is_a?(CustomTable) && table_member_ids.include?(table.id)
 			  end
 
+
+			  TABLE_PERMISSION_MATCH_ANY = 1
+			  TABLE_PERMISSION_MATCH_ALL = 2
+
+			  # General permission check. It does not care about
+			  # Table Workflows and/or Issue Workflows (open/closed), if any.
+			  # It only checks if a Group is a TableMember
+			  # and has permissions (Role) to some Table.
+			  # Params:
+			  # => permissions: symbol or array of symbols
+			  # => table: object or id
+			  # => match_type: TABLE_PERMISSION_MATCH_ANY | TABLE_PERMISSION_MATCH_ALL , when the parameter "permissions" is an Array
+			  def has_table_permissions?(permissions, table, match_type=TABLE_PERMISSION_MATCH_ANY)
+			  	member = TableMember::find_or_new(table, self) # object or id
+			  	return false if member.id.nil?
+			  	permissions = [permissions] unless permissions.is_a?(Array)
+			    result = permissions.collect{|perm|  
+			    	if match_type == TABLE_PERMISSION_MATCH_ANY
+			      	member.roles.map{|r| r.has_permission?(perm) }.any?(true)
+			      elsif match_type == TABLE_PERMISSION_MATCH_ALL
+			      	member.roles.map{|r| r.has_permission?(perm) }.reduce(:&)
+			      else
+			      	false
+			      end
+			    }
+			    result = result.any?(true) if match_type == TABLE_PERMISSION_MATCH_ANY
+			    result = result.reduce(:&) if match_type == TABLE_PERMISSION_MATCH_ALL	
+			    result
+			  end
+
 			end
 
 			# module Prepend extend ActiveSupport::Concern

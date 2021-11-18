@@ -54,14 +54,20 @@ module CustomTablesHelper
     end
   end
 
-  # * permissions: one symbol or an array of symbols
-  # * entity: object or array
-  # * issue: issue to check status
-  # * skip_workflow: true|false. Skips workflow rules and focus on issue status (closed or not) and user's permissions
-  def is_user_allowed_to_table?(permissions, entity:nil, issue:nil, skip_workflow:false)
+  # @param [String|Array] permissions One symbol or an array of symbols.
+  # @param [CustomEntity|Array] entity One object or array of objects.
+  # @param [Issue] issue An Issue to check its status. User is not allowed if IssueStatus is closed.
+  # @param [Boolean] skip_workflow Skips workflow rules and focus on issue status (closed or not) and user's permissions. Defaults to false.
+  # @param [CustomTable] table
+  # @param [Integer] match_type one of Group::TABLE_PERMISSION_MATCH_ANY | Group::TABLE_PERMISSION_MATCH_ALL
+  def is_user_allowed_to_table?(permissions, entity:nil, issue:nil, skip_workflow:false, table:nil , match_type: Group::TABLE_PERMISSION_MATCH_ANY)
     user=User.current
+    return true if user.admin?
+    result = true
 
-    allowed_to_entity = true
+    # ##############################
+    # Check based on Entity
+    # ##############################
     if entity
       if entity.is_a?Array
         entities = CustomEntity.find(entity)
@@ -69,26 +75,40 @@ module CustomTablesHelper
         entities = Array(entity)
       end
       
-      allowed_to_entity = false if entities.collect{|ent|
+      result = false if entities.collect{|ent|
         if skip_workflow
           ent.try(:issue).try(:closed?)
         else
           ent.workflow_rule_by_attribute.select {|attr, rule| rule != 'readonly'}.keys.size == 0 or ent.try(:issue).try(:closed?) # para não editar via página administrativa
         end
-      }.inject{|memo,b| memo|=b }
-
+      }.any?(true)
     end
 
-    allowed_to_entity = false if issue.try(:closed?) # @issue variable would disallow to view the table when the issue is closed.
+    # ##############################
+    # Check based on IssueStatus
+    # ##############################
+
+    result = false if issue.try(:closed?) # @issue class variable is present if the table is related to an Issue. We must disallow the user if the issue is closed.
+
+    # ##############################
+    # Check based on permissions
+    # ##############################
 
     permissions = [permissions] unless permissions.is_a?(Array)
-    permissions.collect{|perm|  
-      if @issue
-        user.allowed_to?(perm, @issue.project)
-      else
-        user.allowed_to?(perm, nil, global: true) #TODO se usuário estiver no grupo autorizado para editar por fora
-      end
-    }.inject{|memo,b| memo|=b } && allowed_to_entity
+    if @issue
+      result &= permissions.collect{|perm|  
+          user.allowed_to?(perm, @issue.project)
+      }.any?(true)
+    end
+
+    # ##############################
+    # Check based on Group (no issue)
+    # ##############################
+    unless @issue.nil? && table.nil?
+      result &= user.groups.map{|group| group.has_table_permissions?(permissions, table, match_type) }.any?(true)
+    end
+
+    result
   end
 
   # helper to change the behavior of an icon depending on issue status for an admin user

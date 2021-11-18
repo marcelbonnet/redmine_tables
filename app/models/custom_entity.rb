@@ -35,15 +35,18 @@ class CustomEntity < ActiveRecord::Base
   # TODO should use CustomTableHelper::is_user_allowed_to_table?
   def editable?(user = User.current)
     return true if user.admin? || custom_table.is_for_all
-    user.allowed_to?(:edit_issues, issue.project)
+    return user.allowed_to?(:edit_issues, issue.project) unless issue.nil?
+    return user.groups.map{|group| group.has_table_permissions?(:edit_table_row, custom_table, Group::TABLE_PERMISSION_MATCH_ANY) }
   end
 
   def visible?(user = User.current)
-    user.allowed_to?(:view_table_rows, nil, global: true)
+    return user.allowed_to?(:view_table_rows, nil, global: true) unless issue.nil?
+    return user.groups.map{|group| group.has_table_permissions?(:view_table_rows, custom_table, Group::TABLE_PERMISSION_MATCH_ANY) }
   end
 
-  def deletable?(user = nil)
-    editable?
+  def deletable?(user = User.current)
+    return editable? unless issue.nil?
+    return user.groups.map{|group| group.has_table_permissions?(:delete_table_row, custom_table, Group::TABLE_PERMISSION_MATCH_ANY) }
   end
 
   def leaf?
@@ -122,6 +125,15 @@ class CustomEntity < ActiveRecord::Base
   # Examples:
   #   custom_entity.workflow_rule_by_attribute # => {'123' => 'required', '124' => 'readonly', '125' => ''}
   def workflow_rule_by_attribute(user=nil)
+    if issue.nil?
+      result = {}
+      custom_fields.map{|cf|
+        perm = cf.editable?? (cf.is_required?? 'required' : '') : 'readonly'
+        result[cf.id.to_s] = perm
+      }
+      return result
+    end
+
     user_real = user || User.current
     roles = user_real.admin ? Role.all.to_a : user_real.roles_for_project(issue.project)
     roles = roles.select(&:consider_workflow?)
@@ -183,11 +195,14 @@ class CustomEntity < ActiveRecord::Base
     result
   end
 
+
+  
   # Returns the names of required attributes for user or the current user
   # For users with multiple roles, the required fields are the intersection of
   # required fields of each role
   # The result is an array of strings where custom fields are represented with their ids
   def required_attribute_names(user=nil)
+    # return [] if issue.nil? #TODO devo fazer isso? Esse método só invocado desta classe. Se não tiver projeto, invocar workflow_rule_by_attribute causará um erro.
     workflow_rule_by_attribute(user).reject {|attr, rule| rule != 'required'}.keys
   end
 
