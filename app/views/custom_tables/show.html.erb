@@ -1,7 +1,12 @@
 <div class="contextual">
+  <% if User.current.admin? %>
   <%= link_to l(:label_settings), edit_custom_table_path(@custom_table), class: 'icon icon-settings' %>
   <%= link_to l(:label_new_column), new_table_field_path(custom_table_id: @custom_table), remote: true, class: 'icon icon-custom-fields' %>
+  <% end %>
+
+  <% if is_user_allowed_to_table?([:add_table_row], table:@custom_table) %>
   <%= link_to l(:label_new), new_custom_entity_path(custom_table_id: @custom_table), remote: true, class: 'icon icon-add' %>
+  <% end %>
 </div>
 
 <%= title [l(:label_custom_tables), custom_tables_path], @custom_table.name %>
