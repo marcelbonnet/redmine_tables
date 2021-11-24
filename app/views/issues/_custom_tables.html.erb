@@ -1,26 +1,38 @@
-<% if is_user_allowed_to_table?([:view_table_rows]) %>
-  <% issue.project.all_issue_custom_tables(issue).each do |custom_table| %>
+<% issue.project.all_issue_custom_tables(issue).each do |custom_table| %>
+  
+  <% if is_user_allowed_to_table?([:view_table_rows], table:custom_table.id) %>
+   
     <% query = custom_table.query(totalable_all: true) %>
     <% query.add_short_filter('issue_id', "=#{issue.id}") %>
     <% back_url = issue_path(issue) %>
     <hr />
+
+    
     <% if is_user_allowed_to_table?(:add_table_row, issue:@issue) %>
+
       <div class="contextual">
         <%= link_to l(:button_add), new_custom_entity_path(
             custom_table_id: custom_table.id,
             back_url: back_url,
             issue_id: issue.id), remote: true %>
       </div>
+    
     <% end %>
+    
+    
     <p><strong><%= custom_table.name %></strong></p>
     <%= render partial: 'query_custom_table', locals: {
         query: query,
         custom_table: custom_table,
         back_url: back_url,
         entities: query.results_scope} %>
+
+  <% elsif issue.project.all_issue_custom_tables(issue).any? %>
+    
+    <div class="warning">
+      <p><%= l(:missing_permission_view_table_rows) %></p>
+    </div>
+  
   <% end %>
-<% elsif issue.project.all_issue_custom_tables(issue).any? %>
-  <div class="warning">
-    <p><%= l(:missing_permission_view_table_rows) %></p>
-  </div>
+
 <% end %>
