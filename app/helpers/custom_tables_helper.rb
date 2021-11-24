@@ -95,17 +95,21 @@ module CustomTablesHelper
     # ##############################
 
     permissions = [permissions] unless permissions.is_a?(Array)
-    if @issue
+    
+    unless @issue.nil?
       result &= permissions.collect{|perm|  
           user.allowed_to?(perm, @issue.project)
       }.any?(true)
     end
 
     # ##############################
-    # Check based on Group (no issue)
+    # Check based TableMember (no issue)
     # ##############################
-    unless @issue.nil? && table.nil?
-      result &= user.groups.map{|group| group.has_table_permissions?(permissions, table, match_type) }.any?(true)
+    if @issue.nil? && !table.nil?
+      # result &= entities.collect{|ent|
+      #   user.groups.map{|group| group.has_table_permissions?(permissions, ent.custom_table, match_type)}
+      # }.any?(true)
+      result &= user.groups.map{|group| group.has_table_permissions?(permissions, table, match_type) }.any?(true) if table.projects.size == 0
     end
 
     result
