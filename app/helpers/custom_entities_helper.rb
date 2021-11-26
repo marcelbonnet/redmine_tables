@@ -1,5 +1,7 @@
 module CustomEntitiesHelper
 
+  include WorkflowTable
+
   # usado em views/custom_entities/_history.html.erb
   def render_custom_entity_notes(journal, options={})
     content = ''

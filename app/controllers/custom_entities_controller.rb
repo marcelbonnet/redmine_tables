@@ -5,7 +5,7 @@ class CustomEntitiesController < ApplicationController
   helper :issues
   include TimelogHelper
   helper :journals
-  include CustomTablesHelper
+  include WorkflowTable
   helper :context_menus
   helper :custom_fields
   helper :queries
@@ -33,7 +33,7 @@ class CustomEntitiesController < ApplicationController
   end
 
   def show
-    raise Unauthorized unless is_user_allowed_to_table?(:view_table_rows, table: @custom_entity.custom_table)
+    raise Unauthorized unless is_user_allowed_to_row?(:view_table_rows, @custom_entity)
 
     @queries_scope = []
     respond_to do |format|
@@ -45,13 +45,13 @@ class CustomEntitiesController < ApplicationController
   end
 
   def new
-    raise Unauthorized unless is_user_allowed_to_table?(:add_table_row, table: params["custom_table_id"])
-
     params.permit(["custom_table_id","issue_id","controller","action","back_url"])
     @custom_entity = CustomEntity.new
     @custom_entity.custom_table_id = params[:custom_table_id]
     @custom_entity.custom_field_values = params[:custom_entity][:custom_field_values] if params[:custom_entity]
     @custom_entity.issue_id = params[:issue_id] #|| params[:custom_entity][:issue_id]
+
+    raise Unauthorized unless is_user_allowed_to_row?(:add_table_row, @custom_entity)
 
     respond_to do |format|
       format.js
@@ -69,14 +69,14 @@ class CustomEntitiesController < ApplicationController
   end
 
   def create
-    raise Unauthorized unless is_user_allowed_to_table?(:add_table_row)
     params.permit(["custom_entity","issue_id","controller","action","back_url"])
     raise Unauthorized unless params.require("custom_entity")
-    raise Unauthorized unless is_user_allowed_to_table?(:add_table_row, table: params[:custom_entity][:custom_table_id])
 
     @custom_entity = CustomEntity.new(author: User.current, custom_table_id: params[:custom_entity][:custom_table_id], issue_id: params[:custom_entity][:issue_id])
     @custom_entity.safe_attributes = parametrize_allowed_attributes
     # @custom_entity.issue_id = params[:issue_id] || params[:custom_entity][:issue_id]
+
+    raise Unauthorized unless is_user_allowed_to_row?(:add_table_row, @custom_entity)
 
     if @custom_entity.save
       flash[:notice] = l(:notice_successful_create)
@@ -178,7 +178,7 @@ class CustomEntitiesController < ApplicationController
   end #upload
 
   def edit
-    raise Unauthorized unless is_user_allowed_to_table?(:edit_table_row, table: @custom_entity.custom_table)
+    raise Unauthorized unless is_user_allowed_to_row?(:edit_table_row, @custom_entity)
 
     @tab = @custom_entity.custom_table.name
     respond_to do |format|
@@ -188,7 +188,7 @@ class CustomEntitiesController < ApplicationController
   end
 
   def update
-    raise Unauthorized unless is_user_allowed_to_table?(:edit_table_row, table: @custom_entity.custom_table)
+    raise Unauthorized unless is_user_allowed_to_row?(:edit_table_row, @custom_entity)
 
     @custom_entity.init_journal(User.current)
     @custom_entity.safe_attributes = parametrize_allowed_attributes
@@ -210,10 +210,9 @@ class CustomEntitiesController < ApplicationController
   end
 
   def destroy
-    @custom_entities.pluck(:custom_table_id).uniq.each do |table_id|
-      raise Unauthorized unless is_user_allowed_to_table?(:delete_table_row, table: table_id)
+    @custom_entities.each do |ce|
+      raise Unauthorized unless is_user_allowed_to_row?(:delete_table_row, ce)
     end
-    raise Unauthorized if Array(@custom_entities).any?{|entity| entity.issue.try(:closed?)}
 
     custom_table = @custom_entities.first.custom_table
     @custom_entities.destroy_all
@@ -254,16 +253,16 @@ class CustomEntitiesController < ApplicationController
   end
 
   def bulk_edit
-    @custom_entities.pluck(:custom_table_id).uniq.each do |table_id|
-      raise Unauthorized unless is_user_allowed_to_table?(:table_bulk_edit, table: table_id)
+    @custom_entities.each do |ce|
+      raise Unauthorized unless is_user_allowed_to_row?(:table_bulk_edit, ce)
     end
 
     @custom_fields = @custom_entities.map { |c| c.available_custom_fields }.reduce(:&).uniq
   end
 
   def bulk_update
-    @custom_entities.pluck(:custom_table_id).uniq.each do |table_id|
-      raise Unauthorized unless is_user_allowed_to_table?(:table_bulk_edit, table: table_id)
+    @custom_entities.each do |ce|
+      raise Unauthorized unless is_user_allowed_to_row?(:table_bulk_edit, ce)
     end
     
     unsaved, saved = [], []

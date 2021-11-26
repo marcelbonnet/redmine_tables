@@ -4,7 +4,7 @@
   <%= link_to l(:label_new_column), new_table_field_path(custom_table_id: @custom_table), remote: true, class: 'icon icon-custom-fields' %>
   <% end %>
 
-  <% if is_user_allowed_to_table?([:add_table_row], table:@custom_table) %>
+  <% if is_user_allowed_to_table?([:add_table_row], @custom_table) %>
   <%= link_to l(:label_new), new_custom_entity_path(custom_table_id: @custom_table), remote: true, class: 'icon icon-add' %>
   <% end %>
 </div>

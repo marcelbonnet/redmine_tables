@@ -1,6 +1,6 @@
 <% issue.project.all_issue_custom_tables(issue).each do |custom_table| %>
   
-  <% if is_user_allowed_to_table?([:view_table_rows], table:custom_table.id) %>
+  <% if is_user_allowed_to_table?([:view_table_rows], custom_table) %>
    
     <% query = custom_table.query(totalable_all: true) %>
     <% query.add_short_filter('issue_id', "=#{issue.id}") %>
@@ -8,7 +8,7 @@
     <hr />
 
     
-    <% if is_user_allowed_to_table?(:add_table_row, issue:@issue) %>
+    <% if is_user_allowed_to_row?(:add_table_row) %>
 
       <div class="contextual">
         <%= link_to l(:button_add), new_custom_entity_path(
