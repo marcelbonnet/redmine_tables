@@ -15,6 +15,7 @@ module WorkflowTable
 
 
 
+	# @params [Symbol|Array] Valid symbols: :add_table_row, :view_table_rows
 	def is_user_allowed_to_table?(permissions, table, table_member_match_type=Group::TABLE_PERMISSION_MATCH_ANY)
 		user=User.current
     return true if user.admin?
@@ -22,16 +23,13 @@ module WorkflowTable
 
     permissions = [permissions] unless permissions.is_a?(Array)
 
-    table = CustomTable.find(table) if table.is_a?Integer
+    table = CustomTable.find(table.to_i) if table.is_a?Integer or table.is_a?String
 
-    if @issue.nil?
-    	if table.projects.size > 0
-    		# TODO
-    		throw Exception.new "TODO: tabela sem @issue, mas está vinculada a algum projeto"
-    	else
-    		# TODO
-    		throw Exception.new "TODO: tabela sem @issue, não está vinculada com nenhum projeto"
-    	end
+    if @issue.nil? # View was reached through route /custom_tables/[:id]
+    	if permissions.size == 0 && permissions.include?(:view_table_rows)
+    		# user is allowed to access the view. But the view will be responsible to check for permissions on each row
+	    	result &= true
+	    end
     else
     	if table.projects.size > 0
     		# Project Members
@@ -42,6 +40,7 @@ module WorkflowTable
     		# Table Members
     		result &= user.groups.map{|group| group.has_table_permissions?(permissions, table, table_member_match_type) }.any?(true)
     	end
+    	result = false if @issue.try(:closed?) && permissions.include?(:add_table_row)
     end
 
     result
@@ -58,7 +57,7 @@ module WorkflowTable
 	# @param [Integer] table_member_match_type defaults to 
 	# Group::TABLE_PERMISSION_MATCH_ANY. Applies when checking against a table 
 	# unrelated to a Project, when TableMember is used.
-	def is_user_allowed_to_row?(permissions, entity=nil, table_member_match_type=Group::TABLE_PERMISSION_MATCH_ANY)
+	def is_user_allowed_to_row?(permissions, entity, table_member_match_type=Group::TABLE_PERMISSION_MATCH_ANY)
 		# entity, issue: pode ter ou não uma issue
 		# se bulke edit, o mesmo problema mas é um array de entidades
 		# para checar por delete, preciso skip_workflow pq o workflow pode estar fechado para edição. Só vou ver se a issu está aberta/fechada
@@ -98,7 +97,7 @@ module WorkflowTable
     # Workflow w/o an Issue
     # ##############################
     if not permissions.include?(:view_table_rows) and not permissions.include?(:delete_table_row)
-    	result = false if entities.empty? or entities.collect{|ent|
+    	result = false if entities.collect{|ent|
       	ent.workflow_rule_by_attribute.select {|attr, rule| rule != 'readonly'}.keys.size == 0 or ent.try(:issue).try(:closed?) # para não editar via página administrativa
     	}.any?(true)
   	end

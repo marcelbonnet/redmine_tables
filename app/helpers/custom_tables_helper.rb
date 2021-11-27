@@ -70,4 +70,11 @@ module CustomTablesHelper
     label
   end
 
+  def allowed_column_content(column, entity)
+    result = l(:missing_permission_view_table_rows_short_msg)
+    ok = is_user_allowed_to_row?(:view_table_rows, entity)
+    result = column_content(column, entity) if ok
+    result
+  end
+
 end

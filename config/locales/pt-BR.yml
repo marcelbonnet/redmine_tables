@@ -40,6 +40,7 @@ pt-BR:
     button_upload: Carregar CSV
 
   missing_permission_view_table_rows: Sem permissão para ver linhas de tabelas
+  missing_permission_view_table_rows_short_msg: Dado restrito
 
   activerecord:
     errors:
