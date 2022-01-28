@@ -7,6 +7,8 @@ class TableWorkflowPermissionsController < ApplicationController
   # TODO accept_api_auth :permissions
 
   def permissions
+    raise Unauthorized unless User.current.admin?
+
     find_trackers_roles_and_statuses_for_edit
 
     if request.post? && @roles && @trackers && params[:permissions]
@@ -28,6 +30,8 @@ class TableWorkflowPermissionsController < ApplicationController
   end
 
   def copy
+    raise Unauthorized unless User.current.admin?
+    
     @roles = Role.order(:name).select(&:consider_workflow?)
     @trackers = Tracker.order(:name)
 
