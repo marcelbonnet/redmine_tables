@@ -300,6 +300,15 @@ class CustomEntitiesController < ApplicationController
     end
   end
 
+  # Should be patched by plugins which add new types of
+  # CustomField and may require special processing.
+  # It should return a hash of Custom Fields and the
+  # permitted values, like {"123" => {"para_name1" => "value1", ...}, "456" => {"para_name1" => "value1", ...}} to persist its CustomValues and relate
+  # them to the CustomEntity.
+  def add_safe_attributes
+    {}
+  end
+
   private
 
   def find_journals
@@ -322,7 +331,8 @@ class CustomEntitiesController < ApplicationController
 
   def parametrize_allowed_attributes
     safe_attributes = params[:custom_entity]["custom_field_values"].to_unsafe_h.keys - @custom_entity.readonly_attribute_names
-    params.require(:custom_entity).permit("custom_field_values": safe_attributes)
+    params.require(:custom_entity).permit("custom_field_values": safe_attributes.push(add_safe_attributes))
+
   end
 
 end
