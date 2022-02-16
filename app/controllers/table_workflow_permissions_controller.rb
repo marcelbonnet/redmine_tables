@@ -23,7 +23,9 @@ class TableWorkflowPermissionsController < ApplicationController
     end
 
     if @roles && @trackers
+      @tables = Array.wrap(params[:table_id]).map(&:to_i).reject{|v| v==0 }
       @custom_fields = @trackers.map(&:custom_entity_custom_fields).flatten.uniq.sort
+      @custom_fields = @custom_fields.select{|cf| @tables.include?(cf.custom_table_id) } unless @tables.empty?
       @permissions = WorkflowPermission.rules_by_status_id(@trackers, @roles)
       @statuses.each {|status| @permissions[status.id] ||= {}}
     end
@@ -72,9 +74,6 @@ class TableWorkflowPermissionsController < ApplicationController
         )
       end
     end
-  end
-
-  def teste
   end
 
   private
