@@ -23,7 +23,6 @@
     <span class="badge badge-private private"><%= l(:field_is_private) %></span>
   <% end %>
 <% end %>
-
 <div class="issue details">
 
   <p class="author">
@@ -35,6 +34,7 @@
 
   <div class="attributes">
     <%= render_half_width_custom_fields_rows(@custom_entity) %>
+    <%= call_hook(:view_custom_entity_attributes_bottom)%>
   </div>
 
   <% @queries_scope.each do |query| %>

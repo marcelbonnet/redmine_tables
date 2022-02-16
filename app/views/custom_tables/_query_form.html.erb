@@ -64,5 +64,6 @@
     <span class="pagination"><%= pagination_links_full @entity_pages, @entity_count %></span>
 <% end %>
 
+<%= call_hook(:view_custom_tables_query_bottom)%>
 
 <%= context_menu %>
