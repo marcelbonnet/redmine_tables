@@ -7,6 +7,8 @@ class TableWorkflowPermissionsController < ApplicationController
   # TODO accept_api_auth :permissions
 
   def permissions
+    raise Unauthorized unless User.current.admin?
+
     find_trackers_roles_and_statuses_for_edit
 
     if request.post? && @roles && @trackers && params[:permissions]
@@ -21,13 +23,17 @@ class TableWorkflowPermissionsController < ApplicationController
     end
 
     if @roles && @trackers
+      @tables = Array.wrap(params[:table_id]).map(&:to_i).reject{|v| v==0 }
       @custom_fields = @trackers.map(&:custom_entity_custom_fields).flatten.uniq.sort
+      @custom_fields = @custom_fields.select{|cf| @tables.include?(cf.custom_table_id) } unless @tables.empty?
       @permissions = WorkflowPermission.rules_by_status_id(@trackers, @roles)
       @statuses.each {|status| @permissions[status.id] ||= {}}
     end
   end
 
   def copy
+    raise Unauthorized unless User.current.admin?
+    
     @roles = Role.order(:name).select(&:consider_workflow?)
     @trackers = Tracker.order(:name)
 
@@ -68,9 +74,6 @@ class TableWorkflowPermissionsController < ApplicationController
         )
       end
     end
-  end
-
-  def teste
   end
 
   private

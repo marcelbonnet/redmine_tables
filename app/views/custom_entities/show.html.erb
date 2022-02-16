@@ -1,13 +1,13 @@
 <%# menu superior da tela de show custom_entity, semelhante a de issue/show%>
 <div class="contextual">
   <%= call_hook(:view_custom_table_table_field_action_menu) %>
-  <% if is_user_allowed_to_table?([:edit_table_row], table: @custom_entity.custom_table) %>
+  <% if is_user_allowed_to_row?([:edit_table_row],@custom_entity) %>
     <%= link_to l(:button_edit), edit_custom_entity_path(@custom_entity, back_url: custom_entity_path(@custom_entity)), remote: true, class: 'icon icon-edit' %>
   <% end %>
   <%# FIXME comments: add new permission; fix HTML editor; fix comment persistance bug%>
   <%#= link_to l(:button_new_comment), new_note_custom_entity_path(@custom_entity), remote: true, class: 'icon icon-issue-edit' %>
   
-  <% if is_user_allowed_to_table?([:delete_table_row], table: @custom_entity.custom_table) %>
+  <% if is_user_allowed_to_row?([:delete_table_row], @custom_entity) %>
     <%= link_to l(:button_delete), custom_entity_path(@custom_entity, custom_table_id: @custom_entity.custom_table), data: {confirm: l(:text_are_you_sure)}, method: :delete, title: l(:button_delete), class: 'icon icon-del' %>
   <% end %>
 </div>
@@ -23,7 +23,6 @@
     <span class="badge badge-private private"><%= l(:field_is_private) %></span>
   <% end %>
 <% end %>
-
 <div class="issue details">
 
   <p class="author">
@@ -35,6 +34,7 @@
 
   <div class="attributes">
     <%= render_half_width_custom_fields_rows(@custom_entity) %>
+    <%= call_hook(:view_custom_entity_attributes_bottom)%>
   </div>
 
   <% @queries_scope.each do |query| %>

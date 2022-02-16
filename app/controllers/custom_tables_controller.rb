@@ -12,7 +12,7 @@ class CustomTablesController < ApplicationController
   helper :custom_entities
   helper :settings
   helper :custom_tables_pdf
-  include CustomTablesHelper
+  include WorkflowTable
 
   before_action :find_custom_table, only: [:edit, :update, :show, :destroy, :setting_tabs]
   before_action :authorize_global
@@ -46,7 +46,7 @@ class CustomTablesController < ApplicationController
   end
 
   def show
-    raise Unauthorized unless is_user_allowed_to_table?(:view_table_rows, table: params[:id])
+    raise Unauthorized unless is_user_allowed_to_table?(:view_table_rows, params[:id])
 
     @query = @custom_table.query
     @query.build_from_params(params.except(:id))

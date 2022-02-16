@@ -32,7 +32,6 @@ class CustomEntity < ActiveRecord::Base
     end
   end
 
-  # TODO should use CustomTableHelper::is_user_allowed_to_table?
   def editable?(user = User.current)
     return true if user.admin? || custom_table.is_for_all
     return user.allowed_to?(:edit_issues, issue.project) unless issue.nil?

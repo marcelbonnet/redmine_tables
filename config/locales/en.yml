@@ -39,8 +39,28 @@ en:
     button_upload: "Upload"
 
   missing_permission_view_table_rows: No permission to view table rows
+  missing_permission_view_table_rows_short_msg: Dado restrito
 
   activerecord:
     errors:
       messages:
         readonly_cf: "Read only custom field"
+        readonly_fields: Todos os campos são "somente leitura"
+
+  permission_view_table_rows: Ver linhas de tabelas
+  permission_add_table_row: Adicionar linha em tabela
+  permission_edit_table_row: Editar linha de tabela
+  permission_delete_table_row: Remover linha de tabela
+  permission_upload_csv_to_table: Subir arquivo csv em tabela
+  permission_table_bulk_edit: Edição em lote de tabela
+
+  label_table_workflow: Fluxo de trabalho de tabelas
+  label_custom_entity_custom_field: Campo personalizado de tabela
+
+  admin_text_are_you_sure: Você tem certeza de prosseguir numa ação proibida ao usuário comum? Você vai violar o fluxo de trabalho.
+  admin_button_edit: Editar registro violando o fluxo de trabalho de usuário comum
+  admin_button_delete: Remover registro violando o fluxo de trabalho de usuário comum
+  label_entity_header: Relacionada com
+  label_entity_row: Item
+  notice_failed_to_save_table_members: "Falha ao salvar membro(s) de tabela(s): %{errors}."
+  label_select_all: All

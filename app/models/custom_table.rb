@@ -32,19 +32,18 @@ class CustomTable < ActiveRecord::Base
   scope :status, lambda {|arg| where(arg.blank? ? nil : {:status => arg.to_i})}
   # TODO public table, allowing public view + add|edit|remove ?
 
-  # The table is visible to any user or only to user with the selected Roles, when related to an Issue + Tracker
+  # The table is visible if:
+  #  - Has attribute/column visible=true
+  #  - User belongs to a Group that has TableMembership (when Table is not related to a Project)
+  #  - User belongs to a Project related to the Table
   scope :visible, lambda {|*args|
     user = args.shift || User.current
-    if user.admin?
-      # nop
-    elsif user.memberships.any?
-      where("#{table_name}.visible = ? OR #{table_name}.id IN (SELECT DISTINCT cfr.custom_table_id FROM #{Member.table_name} m" +
-                " INNER JOIN #{MemberRole.table_name} mr ON mr.member_id = m.id" +
-                " INNER JOIN #{table_name_prefix}custom_tables_roles#{table_name_suffix} cfr ON cfr.role_id = mr.role_id" +
-                " WHERE m.user_id = ?)",
-            true, user.id)
-    else
-      where(:visible => true)
+    if !user.admin?
+      user_table_ids = user.groups.map{|g| g.table_memberships.map(&:custom_table_id) }.flatten
+
+      user_projects_table_ids = user.projects.map(&:custom_table_ids).flatten.uniq
+
+      where("#{table_name}.visible = ? or #{table_name}.id in (?) or #{table_name}.id in (?)", true, user_table_ids, user_projects_table_ids)
     end
   }
 

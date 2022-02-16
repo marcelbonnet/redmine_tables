@@ -37,7 +37,7 @@ issue_id = params[:issue_id] || params[:custom_entity][:issue_id] || @custom_ent
 
 <%# FIXME does not work without an Issue (admin layout) %>
 <% unless issue_id.nil? %>
-    <% if is_user_allowed_to_table?([:upload_csv_to_table]) %>
+    <% if is_user_allowed_to_table?([:upload_csv_to_table], custom_table_id) %>
         <h3><%=l("custom_tables.file_upload")%></h3>
         <p><%=l("custom_tables.file_upload_instructions")%></p>
         <%= link_to l("custom_tables.example_file"), csv_example_custom_tables_path(custom_table_id) %>
