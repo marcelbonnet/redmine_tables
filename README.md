@@ -34,9 +34,10 @@ New Features
 * Tables may not be related to an Issue
 * Tables can be viewed, edited, searched, exported to pdf/csv and more by non admin users
 
-WIP
+WIP (Work in Progress)
 -------------
 
+* Pivot Table
 * Table attachments
 * Searching through tables has some minor bugs
 * API is not fully operational or tested
