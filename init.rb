@@ -1,14 +1,12 @@
 require 'redmine'
 
-# TODO: I had to change the name of the plugin because Redmine
-# loads plugins alphabetically. Redmine needs a patch!
-Redmine::Plugin.register :redmine_cw_custom_tables do
-  name 'Custom Tables'
+Redmine::Plugin.register :redmine_tables do
+  name 'Redmine Tables'
   author 'Marcel Bonnet'
-  description 'This is a plugin for Redmine, forked from Custom Tables 1.0.6, authored by Ivan Marangoz on https://github.com/frywer/custom_tables . It is compatible with Redmine Custom Workflows plugin and comes with other features.'
+  description 'Create custom Tables, granting permissions and creating workflows. It is compatible with Redmine Custom Workflows plugin too.'
   version '1.1.0'
   requires_redmine :version_or_higher => '3.4.0'
-  url 'https://github.com/marcelbonnet/redmine_cw_custom_tables'
+  url 'https://github.com/marcelbonnet/redmine_tables'
   author_url 'https://github.com/marcelbonnet'
 
   permission :view_table_rows, {
@@ -48,10 +46,10 @@ Redmine::Plugin.register :redmine_cw_custom_tables do
 
 end
 
+
 Redmine::MenuManager.map :admin_menu do |menu|
   menu.push :custom_tables, :custom_tables_path, caption: :label_custom_tables,
             :html => {:class => 'icon icon-package'}
 end
 
 Dir[File.join(File.dirname(__FILE__), '/lib/custom_tables/**/*.rb')].each { |file| require_dependency file }
-
