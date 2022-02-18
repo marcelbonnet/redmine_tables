@@ -68,6 +68,31 @@ Usage
 3) Add custom fields to your new table.
 4) Grant access to the users **Administration -> Roles and permissions -> Project -> Manage custom tables**
 
+Example Using with Redmine Custom Workflows
+----------------------
+
+* Create a new workflow
+* The object you want is Custom Entity/Redmine Table
+
+Example code to force any custom value less then 100, with CustomField ID=699, to a default value:
+
+```
+Rails.logger.info "==> TESTING 1,2,3..."
+
+# rules
+custom_field_id = 699
+min = 100
+default_val = 100
+
+value = self.custom_field_value(custom_field_id)
+
+if value.to_i < min
+  self.custom_field_values = { 
+    custom_field_id => default_val
+  }
+end
+```
+
 
 History
 ----------------------
