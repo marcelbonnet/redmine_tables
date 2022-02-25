@@ -47,7 +47,7 @@ class CustomTable < ActiveRecord::Base
     end
   }
 
-  safe_attributes 'name', 'author_id', 'main_custom_field_id', 'project_ids', 'is_for_all', 'description', 'tracker_ids', 'role_ids', 'visible'
+  safe_attributes 'name', 'author_id', 'main_custom_field_id', 'project_ids', 'is_for_all', 'description', 'tracker_ids', 'role_ids', 'visible', 'max_rows', 'pivot'
 
   validates :name, presence: true, uniqueness: true
 

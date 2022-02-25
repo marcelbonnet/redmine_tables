@@ -78,7 +78,7 @@ class CustomEntitiesController < ApplicationController
 
     raise Unauthorized unless is_user_allowed_to_row?(:add_table_row, @custom_entity)
 
-    if @custom_entity.save
+    if check_max_rows && @custom_entity.save
       flash[:notice] = l(:notice_successful_create)
       respond_to do |format|
         format.html { redirect_back_or_default custom_table_path(@custom_entity.custom_table) }
@@ -135,7 +135,6 @@ class CustomEntitiesController < ApplicationController
     
     @custom_entities = []
 
-
     csv.each{|row|
       ce = base_ce.dup
       safe_attributes = ce.custom_field_values.collect{|o| o.custom_field_id} - ce.readonly_attribute_names.map(&:to_i)
@@ -154,8 +153,9 @@ class CustomEntitiesController < ApplicationController
     attachment.destroy
 
     @csv_is_valid = @custom_entities.collect{|ce| ce.valid? }.inject{|memo, v| memo&=v}
+    flash[:notice] = l("custom_tables.csv.file_validated") if @csv_is_valid
 
-    if @csv_is_valid
+    if check_max_rows(csv.size) && @csv_is_valid
       @custom_entities.each{|ce| ce.save }
       flash[:notice] = l(:notice_successful_create)
       respond_to do |format|
@@ -310,6 +310,23 @@ class CustomEntitiesController < ApplicationController
   end
 
   private
+
+  def check_max_rows(num_new_rows=1)
+    if @custom_entity
+      table = @custom_entity.custom_table
+      iid = @custom_entity.issue_id
+    else
+      table = @custom_entities.first.custom_table
+      iid = @custom_entities.first.issue_id
+    end
+
+    unless table_allows_more_rows?(table, iid, num_new_rows)
+      flash[:error] = l("custom_tables.notice_max_rows", name:table.name, num:table.max_rows)
+      false
+    else
+      true
+    end
+  end
 
   def find_journals
     @journals = @custom_entity.journals.preload(:journalized, :user, :details).reorder("#{Journal.table_name}.id ASC").to_a

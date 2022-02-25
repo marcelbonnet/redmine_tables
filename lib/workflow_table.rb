@@ -14,6 +14,18 @@ module WorkflowTable
 	# app/views/issues/_custom_tables.html.erb:11:    <% if is_user_allowed_to_table?(:add_table_row, issue:@issue) %> tirar issue do param
 
 
+  # @params [CustomTable] tableA CustomTable
+  # @params [Integer] issue_id The Issue ID
+  # @params [Integer] num_new_rows number of new rows
+  # Checks if table allows more rows to be added.
+  def table_allows_more_rows?(table, issue_id, num_new_rows=1)
+    if CustomEntity.where(custom_table_id:table.id, issue_id:issue_id).size + num_new_rows > table.max_rows.to_i 
+      false
+    else
+      true
+    end
+  end
+
 
 	# @params [Symbol|Array] Valid symbols: :add_table_row, :view_table_rows
 	def is_user_allowed_to_table?(permissions, table, table_member_match_type=Group::TABLE_PERMISSION_MATCH_ANY)

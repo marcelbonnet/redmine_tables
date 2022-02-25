@@ -33,11 +33,15 @@ pt-BR:
 
   custom_tables:
     csv:
-        line: Linha número #%{line}
+        line: "Linha número #%{line}"
+        file_validated: O arquivo CSV passou na validação de campos.
     file_upload: Subir arquivo CSV
     file_upload_instructions: O arquivo CSV deve ser codificado como ISO8859-1 ou UTF-8. Pode ter as colunas em qualquer ordem. O CSV deve ter cabeçalho, usando os nomes de colunas do arquivo de exemplo.
     example_file: Arquivo de exemplo
     button_upload: Carregar CSV
+    label_max_rows: Número máx. de linhas
+    label_pivot: Pivot
+    notice_max_rows: A tabela %{name} permite até %{num} linhas.
 
   missing_permission_view_table_rows: Sem permissão para ver linhas de tabelas
   missing_permission_view_table_rows_short_msg: Dado restrito

@@ -8,7 +8,7 @@
     <hr />
 
     
-    <% if is_user_allowed_to_table?(:add_table_row, custom_table) %>
+    <% if is_user_allowed_to_table?(:add_table_row, custom_table) && table_allows_more_rows?(custom_table, issue.id) %>
 
       <div class="contextual">
         <%= link_to l(:button_add), new_custom_entity_path(

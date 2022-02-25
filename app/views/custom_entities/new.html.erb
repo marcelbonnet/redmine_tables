@@ -5,11 +5,7 @@ issue_id = params[:issue_id] || params[:custom_entity][:issue_id] || @custom_ent
 
 <% if @custom_entities #if after CSV Upload %>
     <% line = 1 %>
-    <% if @csv_is_valid %>
-        <div class="flash notice">
-            <%=l(:notice_successful_create)%>
-        </div>
-    <% else %>
+    <% unless @csv_is_valid %>
         <div class="flash error">
             <ul>
             <% @custom_entities.each do |ce| %>
