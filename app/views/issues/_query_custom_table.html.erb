@@ -17,7 +17,7 @@
       </thead>
       <tbody>
       <% grouped_query_results(entities, query) do |entity, _group_name, _group_count, _group_totals| -%>
-        <tr class="cusotm-entity-<%= cycle("odd", "even") %> hascontextmenu">
+        <tr class="custom-entity-<%= cycle("odd", "even") %> hascontextmenu">
           <td class="checkbox hide-when-print"><%= check_box_tag("ids[]", entity.id, false, id: nil) %></td>
           <%= raw query.inline_columns.map {|column| "<td class=\"#{column.css_classes}\">#{column_content(column, entity)}</td>"}.join %>
           <td class="buttons">
