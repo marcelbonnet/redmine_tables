@@ -19,7 +19,7 @@ module WorkflowTable
   # @params [Integer] num_new_rows number of new rows
   # Checks if table allows more rows to be added.
   def table_allows_more_rows?(table, issue_id, num_new_rows=1)
-    if CustomEntity.where(custom_table_id:table.id, issue_id:issue_id).size + num_new_rows > table.max_rows.to_i 
+    if CustomEntity.where(custom_table_id:table.id, issue_id:issue_id).size + num_new_rows > table.max_rows.to_i && !table.max_rows.nil?
       false
     else
       true
