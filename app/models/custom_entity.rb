@@ -147,9 +147,13 @@ class CustomEntity < ActiveRecord::Base
     if workflow_permissions.any?
       workflow_rules = workflow_permissions.inject({}) do |h, wp|
         h[wp.field_name] ||= {}
+        roles.each do |r|
+          h[wp.field_name][r.id] ||= ""
+        end
         h[wp.field_name][wp.role_id] = wp.rule
         h
       end
+
 
       # ######################
       # fields invisíveis
@@ -176,13 +180,12 @@ class CustomEntity < ActiveRecord::Base
       # ######################
       # Less restrict rules from user's project roles
       workflow_rules.each do |attr, rules|
-        next if rules.size < roles.size # de todas as regras de um CF, retornará a mais restritiva
-
-        uniq_rules = rules.values.uniq
-        if uniq_rules.size == 1
-          result[attr] = uniq_rules.first
+        if rules.values.uniq.include?""
+          result[attr] = ""
+        elsif rules.values.uniq.include?"required"
+          result[attr] = "required"
         else
-          result[attr] = 'required'
+          result[attr] = "readonly"
         end
       end
     end
