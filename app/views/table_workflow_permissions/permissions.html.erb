@@ -44,11 +44,10 @@
     <thead>
       <tr>
         <th><%= l(:label_table)%></th>
-        <th>
-        </th>
         <th colspan="<%= @statuses.length %>"><%=l(:label_issue_status)%></th>
       </tr>
       <tr>
+        <td></td>
         <td></td>
         <% for status in @statuses %>
         <td style="width:<%= 75 / @statuses.size %>%;">
