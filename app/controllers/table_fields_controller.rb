@@ -17,7 +17,6 @@ class TableFieldsController < CustomFieldsController
   end
 
   def create
-    update_tracker
     
     if @custom_field.save
       flash[:notice] = l(:notice_successful_create)
@@ -48,8 +47,6 @@ class TableFieldsController < CustomFieldsController
 
     @custom_field.safe_attributes = params[:custom_field]
     
-    update_tracker
-
     if @custom_field.save
       respond_to do |format|
         format.html {
@@ -84,22 +81,6 @@ class TableFieldsController < CustomFieldsController
   def build_new_custom_field
     @custom_field = CustomEntityCustomField.new
     @custom_field.safe_attributes = params[:custom_field]
-  end
-
-  def update_tracker
-    # FIXME ver como fazer uma transaction aqui. No controler de workflows do redmine tem um de exemplo
-    @custom_field.custom_table.trackers.each do |t|
-      t.custom_entity_custom_fields << @custom_field
-      begin
-        t.validate!
-      rescue => e
-        respond_to do |format|
-          format.html { render action: 'edit'}
-          format.js { head 500 }
-        end
-      end
-      t.save
-    end
   end
 
 end
