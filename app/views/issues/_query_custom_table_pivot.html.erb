@@ -1,0 +1,60 @@
+<%= render_query_totals(query) %>
+<%= form_tag({}, data: {cm_url: context_menu_custom_entities_path(back_url: back_url)}) do -%>
+  <%= hidden_field_tag 'back_url', back_url %>
+  <div class="autoscroll">
+    <table class="list time-entries">
+      <thead>
+      <tr>
+        <th class="checkbox hide-when-print">
+          <%= check_box_tag 'check_all', '', false, class: 'toggle-selection',
+                            :title => "#{l(:button_check_all)}/#{l(:button_uncheck_all)}" %>
+        </th>
+        <th>Col</th>
+        <th>Val</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% grouped_query_results(entities, query) do |entity, _group_name, _group_count, _group_totals| -%>
+        <% is_new_raw = true %>
+        <% query.inline_columns.each_with_index do |column, col_index| %>
+          <tr class="custom-entity-<%= cycle("odd", "even") %> hascontextmenu">
+            <%# FIXME: a seleção das linhas; o menu de contexto; alinhamento do cabeçalho na primeira coluna; ordenação foi pro saco; buttons de ações devem ser apenas um por registro %>
+            <td class="checkbox hide-when-print">
+              <%= check_box_tag("ids[]", entity.id, false, id: nil) if is_new_raw %>
+            </td>
+            <% is_new_raw = false %>
+
+            <%# TH Column Name %>
+            <% current_column = query.inline_columns[col_index] %>
+            <%= column_header(query, current_column ) %>
+
+            <td class="<%= column.css_classes %>"><%= raw column_content(column, entity) %></td>
+
+            <td class="buttons">
+              <% if is_user_allowed_to_row?(:view_table_rows, entity) %>
+                <%= link_to l(:button_show), custom_entity_path(entity), title: l(:button_show), class: 'icon-only icon-magnifier' %>
+              <% end %>
+              <% if is_user_allowed_to_row?([:edit_table_row], entity) %>
+                <%= link_to l(:button_edit), edit_custom_entity_path(entity, edit_query: true, back_url: back_url), remote: true, title: l(:button_edit), class: 'icon-only icon-edit' %>
+              <% end %>
+              <% if is_user_allowed_to_row?([:delete_table_row], entity) %>
+                <%= link_to l(:button_delete), custom_entity_path(entity, custom_table_id: custom_table, back_url: back_url), data: {confirm: l(:text_are_you_sure)}, method: :delete, title: l(:button_delete), class: 'icon-only icon-del' %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if entities.empty? %>
+    <div class="warning">
+      <p>
+        <strong><%= l(:label_no_data) %></strong>
+      </p>
+    </div>
+  <% end  %>
+<% end %>
+
+<%= context_menu %>
