@@ -5,6 +5,7 @@ class CustomEntityQuery < Query
 
   attr_accessor :custom_table_id
 
+  # override class_attribute :available_columns
   def available_columns
     return @available_columns if @available_columns
     @available_columns = [
@@ -24,6 +25,7 @@ class CustomEntityQuery < Query
     add_filter('spent_on', '*') unless filters.present?
   end
 
+  # implemented by Query sub-classes
   def initialize_available_filters
     add_available_filter("issue_id", :type => :tree, :label => :label_issue)
     add_available_filter "created_at", type: :date, label: :field_created_on
@@ -35,6 +37,7 @@ class CustomEntityQuery < Query
     end
   end
 
+  # raise not implemented in Query
   def base_scope
     CustomEntity
       .where(statement)
