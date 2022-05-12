@@ -27,6 +27,7 @@ pt-BR:
   label_new_note: Novo comentário
   field_external_name: Nome externo (API/ArquivoCSV)
   field_export: Exportar
+  field_visible: Visibilidade
   text_missing_permission_manage_custom_tables: Você não tem permissão para administrar tabelas personalizadas
 
   custom_workflow_observable_custom_entity: Entidade/tabela personalizada
@@ -41,6 +42,8 @@ pt-BR:
     button_upload: Carregar CSV
     label_max_rows: Número máx. de linhas
     label_pivot: Pivot
+    label_visible: Visível
+    label_invisible: Invisível
     notice_max_rows: A tabela %{name} permite até %{num} linhas.
 
   missing_permission_view_table_rows: Sem permissão para ver linhas de tabelas

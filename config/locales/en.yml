@@ -22,10 +22,12 @@ en:
   label_all_tables: All tables
   help_please_configure_table_first: There is no custom fields on this table. %{settings}
   label_add: Add
+  label_add_table: Add table
   button_new_comment: New comment
   label_new_note: New comment
   field_external_name: External name
   field_export: Export
+  field_visible: Visibility
   text_missing_permission_manage_custom_tables: No permission to manage custom tables!
 
   custom_workflow_observable_custom_entity: Custom Tables/Custom Entity
@@ -33,13 +35,19 @@ en:
   custom_tables:
     csv:
         line: "line number #%{line}"
+        file_validated: O arquivo CSV passou na validação de campos.
     file_upload: "CSV file upload"
     file_upload_instructions: "CSV must be ISO8859-1 or UTF-8 encoded. Columns in any order. Must have header names as in example file."
     example_file: "Example file"
     button_upload: "Upload"
+    label_max_rows: Max lines
+    label_pivot: Pivot
+    label_visible: Visible
+    label_invisible: Hidden
+    notice_max_rows: Table %{name} max lines is %{num}.
 
   missing_permission_view_table_rows: No permission to view table rows
-  missing_permission_view_table_rows_short_msg: Dado restrito
+  missing_permission_view_table_rows_short_msg: Hidden data
 
   activerecord:
     errors:
