@@ -4,7 +4,7 @@ Redmine::Plugin.register :redmine_tables do
   name 'Redmine Tables'
   author 'Marcel Bonnet'
   description 'Create custom Tables, granting permissions and creating workflows. It is compatible with Redmine Custom Workflows plugin too.'
-  version '1.1.4'
+  version '1.1.5'
   requires_redmine :version_or_higher => '3.4.0'
   url 'https://github.com/marcelbonnet/redmine_tables'
   author_url 'https://github.com/marcelbonnet'
