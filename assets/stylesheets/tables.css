@@ -1,2 +1,4 @@
 .icon-edit-admin { background-image: url(../images/edit_admin.png); }
 .icon-del-admin { background-image: url(../images/delete_admin.png); }
+.icon-visible-anonymous { background-image: url(../images/anonymous.png); }
+.icon-visible-roles { background-image: url(../images/group.png); }

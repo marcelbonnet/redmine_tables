@@ -5,9 +5,6 @@
     <p><%= f.text_field :name, size: 50, required: true %></p>
     <p><%= f.text_area :description, rows: 7 %></p>
     <p><%= f.number_field :max_rows, min:0, step:1, label:l("custom_tables.label_max_rows"), onchange:"if (this.value==0)this.value=''" %></p>
-    <!-- <%# TODO implements PivotQuery %>
-    <p><%#= f.check_box :pivot, label:l("custom_tables.label_pivot") %></p>
-    -->
   </div>
 
   <fieldset class="box" id="custom_table_tracker_ids"><legend><%= toggle_checkboxes_link("#custom_table_tracker_ids input[type=checkbox]") %><%=l(:label_tracker_plural)%></legend>

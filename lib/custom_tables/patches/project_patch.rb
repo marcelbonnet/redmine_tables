@@ -11,7 +11,7 @@ module CustomTables
           def all_issue_custom_tables(issue)
             @custom_tables ||= CustomTable.
                 joins(:trackers).
-                visible.
+                visible({issue: issue}).
                 sorted.
                 where("custom_tables.is_for_all = ? OR custom_tables.id IN (?)", true, custom_table_ids).
                 where(trackers: {id: issue.tracker})

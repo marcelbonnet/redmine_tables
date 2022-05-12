@@ -32,18 +32,26 @@ class CustomTable < ActiveRecord::Base
   scope :status, lambda {|arg| where(arg.blank? ? nil : {:status => arg.to_i})}
   # TODO public table, allowing public view + add|edit|remove ?
 
-  # The table is visible if:
-  #  - Has attribute/column visible=true
-  #  - User belongs to a Group that has TableMembership (when Table is not related to a Project)
-  #  - User belongs to a Project related to the Table
-  scope :visible, lambda {|*args|
-    user = args.shift || User.current
-    if !user.admin?
+  
+  # @params {Hash} opt {user: User|nil, issue: Issue|nil}
+  scope :visible, lambda {|opt|
+    raise "Not a hash" unless opt.is_a?(Hash)
+    user = opt.has_key?(:user) ? opt[:user] : User.current
+    issue = opt.has_key?(:issue) ? opt[:issue] : nil
+    visible_column = true # the column 'visible' attribute
+
+    if not user.admin?
+      # Get the tables from memberships
       user_table_ids = user.groups.map{|g| g.table_memberships.map(&:custom_table_id) }.flatten
-
+      # Get the tables from the project
       user_projects_table_ids = user.projects.map(&:custom_table_ids).flatten.uniq
+      # Remove the tables not showable for issue
+      if issue
+        user_projects_table_ids.select!{|tid| CustomTable.find(tid).showable?(issue) }
+      end
 
-      where("#{table_name}.visible = ? or #{table_name}.id in (?) or #{table_name}.id in (?)", true, user_table_ids, user_projects_table_ids)
+      # mount the query for this scope
+      where("#{table_name}.visible = ? or #{table_name}.id in (?) or #{table_name}.id in (?)", visible_column, user_table_ids, user_projects_table_ids)
     end
   }
 

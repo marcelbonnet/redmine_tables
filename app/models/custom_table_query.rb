@@ -4,11 +4,13 @@ class CustomTableQuery < Query
 
   self.available_columns = [
     QueryColumn.new(:name, sortable: "#{CustomTable.table_name}.name", caption: l(:field_name)),
+    QueryColumn.new(:visible, sortable: "#{CustomTable.table_name}.visible", caption: l(:field_visible)),
     QueryColumn.new(:created_at, sortable: "#{CustomTable.table_name}.created_at", caption: l(:field_created_on))
   ]
 
   def initialize_available_filters
     add_available_filter "name", type: :string, label: :field_name
+    add_available_filter "visible", type: :boolean, label: :field_visible
     add_available_filter "created_at", type: :date_past, label: :field_created_on
   end
 
@@ -25,7 +27,7 @@ class CustomTableQuery < Query
 
   def default_columns_names
     @default_columns_names ||= begin
-      default_columns = [:name, :created_at]
+      default_columns = [:name, :visible, :created_at]
 
       project.present? ? default_columns : [:project] | default_columns
     end

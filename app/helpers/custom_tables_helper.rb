@@ -20,6 +20,10 @@ module CustomTablesHelper
     case column.name
     when :name
       link_to value, custom_table_path(entity)
+    when :visible
+      is_true = (value.class.name == 'TrueClass')
+      css = is_true ? "icon-only icon-visible-anonymous" : "icon-only icon-visible-roles"
+      content_tag(:span, "", class: css)
     else
       format_object(value)
     end
@@ -76,5 +80,12 @@ module CustomTablesHelper
     result = column_content(column, entity) if ok
     result
   end
+
+  # def custom_tables_visible_options_for_select(selected)
+  #   options_for_select([
+  #     [l('custom_tables.label_visible'), '1'],
+  #     [l('custom_tables.label_invisible'), '0'],
+  #     ], selected ? '1' : '0' )
+  # end
 
 end

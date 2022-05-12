@@ -15,7 +15,7 @@
 <br>
 
 <div class="autoscroll">
-  <table class="list users">
+  <table class="list custom_tables">
     <thead>
     <tr>
       <% @query.inline_columns.each do |column| %>
@@ -39,3 +39,5 @@
   </table>
 </div>
 <span class="pagination"><%= pagination_links_full @custom_tables_pages, @custom_tables_count %></span>
+
+<%=stylesheet_link_tag("tables", plugin: "redmine_tables") %>
