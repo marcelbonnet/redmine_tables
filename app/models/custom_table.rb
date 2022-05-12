@@ -83,4 +83,15 @@ class CustomTable < ActiveRecord::Base
     query
   end
 
+  # Returns true if the Tables Conditions for exhibition are satisfied
+  def showable?(issue)
+    return true if User.current.admin?
+    # teste de condição:
+    rules = []
+    rules << (issue.custom_value_for(89).value =~ /.*Tributária.*/) == 0
+    rules << self.id == 46 || self.is_form?
+    Rails.logger.info "REGRAS TABELA: #{rules}"
+    rules.all?(true)
+  end
+
 end

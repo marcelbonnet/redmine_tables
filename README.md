@@ -24,9 +24,11 @@ It allows you to create any databases you need for your business and integrate i
 
 <img src="custom_tables.jpg" width="800"/>
 
+What's New
+-------------
+* Conditions allows to show/hide the table depending on an Issue's CustomField value. Example: "hide this table if the issue has a field named 'Foo Type' filled with 'bar'".
 
-
-New Features
+Features
 -------------
 * Upload CSV file to populate the Tables
 * Minor bug fixes
@@ -98,3 +100,7 @@ end
 History
 ----------------------
 This project was based on redmine_custom_tables from https://github.com/frywer/custom_tables and severely modified.
+
+Icons
+----------------------
+* [Anonymous icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/anonymous)
