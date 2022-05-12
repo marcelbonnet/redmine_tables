@@ -21,11 +21,23 @@
     
     
     <p><strong><%= custom_table.name %></strong></p>
-    <%= render partial: 'query_custom_table', locals: {
-        query: query,
-        custom_table: custom_table,
-        back_url: back_url,
-        entities: query.results_scope} %>
+    <% unless custom_table.pivot? %>
+      <%= render partial: 'query_custom_table', locals: {
+          query: query,
+          custom_table: custom_table,
+          back_url: back_url,
+          entities: query.results_scope} %>
+    <% else %>
+        <p>Oops... pivot table is not implemented: open rails console and run:</p>
+        <pre>
+          CustomTable.where(pivot:true).update_all(pivot:false)
+        </pre>
+        <%#= render partial: 'query_custom_table_pivot', locals: {
+          query: query,
+          custom_table: custom_table,
+          back_url: back_url,
+          entities: query.results_scope} %>
+    <% end %>
 
   <% elsif issue.project.all_issue_custom_tables(issue).any? %>
     
