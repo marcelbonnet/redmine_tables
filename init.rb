@@ -53,3 +53,15 @@ Redmine::MenuManager.map :admin_menu do |menu|
 end
 
 Dir[File.join(File.dirname(__FILE__), '/lib/custom_tables/**/*.rb')].each { |file| require_dependency file }
+
+class RedmineTablesHook < Redmine::Hook::Listener
+  def after_plugins_loaded(context={})
+    # checks if redmine_field_conditions is installed
+    begin
+      RedmineFieldConditions.is_a?(Module)
+    rescue NameError
+      # recommendation:
+      puts "redmine_tables plugin works better if redmine_field_conditions plugin is installed. Give it a try!"
+    end
+  end
+end
