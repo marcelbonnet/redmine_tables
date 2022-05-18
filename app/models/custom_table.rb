@@ -47,7 +47,7 @@ class CustomTable < ActiveRecord::Base
       user_projects_table_ids = user.projects.map(&:custom_table_ids).flatten.uniq
       # Remove the tables not showable for issue
       if issue
-        user_projects_table_ids.select!{|tid| CustomTable.find(tid).showable?(issue) }
+        user_projects_table_ids.select!{|tid| CustomTable.find(tid).visible_to?(issue) }
       end
 
       # mount the query for this scope
@@ -84,14 +84,9 @@ class CustomTable < ActiveRecord::Base
   end
 
   # Returns true if the Tables Conditions for exhibition are satisfied
-  def showable?(issue)
-    return true if User.current.admin?
-    # teste de condição:
-    rules = []
-    rules << (issue.custom_value_for(89).value =~ /.*Tributária.*/) == 0
-    rules << self.id == 46 || self.is_form?
-    Rails.logger.info "REGRAS TABELA: #{rules}"
-    rules.all?(true)
+  # Implementation delegated to redmine_field_conditions plugin, if installed.
+  def visible_to?(issue)
+    true
   end
 
 end
