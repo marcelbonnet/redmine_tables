@@ -100,8 +100,7 @@ class CustomTablesController < ApplicationController
   end
 
   def edit
-    @custom_fields_by_type = @custom_table.custom_fields.group_by {|f| f.class.name }
-    @tab = @custom_table.name
+    set_edit_view_variables
     respond_to do |format|
       format.js
       format.html
@@ -174,6 +173,11 @@ class CustomTablesController < ApplicationController
 
   
   private
+
+  def set_edit_view_variables
+    @custom_fields_by_type = @custom_table.custom_fields.group_by {|f| f.class.name }
+    @tab = @custom_table.name
+  end
 
   def find_custom_table
     @custom_table = CustomTable.find(params[:id])
