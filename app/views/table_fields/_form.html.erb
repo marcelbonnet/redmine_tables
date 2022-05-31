@@ -17,7 +17,7 @@
 
 <%= render_custom_field_format_partial f, @custom_field %>
 
-<%= call_hook(:view_custom_fields_form_upper_box, :custom_field => @custom_field, :form => f) %>
+<%= call_hook(:view_custom_tables_fields_form_upper_box, :custom_field => @custom_field, :form => f) %>
 </div>
 <p><%= submit_tag l(:button_save) %></p>
 </div>
@@ -84,7 +84,7 @@ when "IssueCustomField" %>
     <p><%= f.check_box :is_filter, { checked: true } %></p>
     <p><%= f.text_field :external_name %></p>
 <% end %>
-<%= call_hook(:"view_custom_fields_form_#{@custom_field.type.to_s.underscore}", :custom_field => @custom_field, :form => f) %>
+<%= call_hook(:"view_custom_tables_fields_form_#{@custom_field.type.to_s.underscore}", :custom_field => @custom_field, :form => f) %>
 </div>
 
 <% if @custom_field.is_a?(IssueCustomField) %>
