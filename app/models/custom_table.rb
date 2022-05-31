@@ -50,8 +50,11 @@ class CustomTable < ActiveRecord::Base
         user_projects_table_ids.select!{|tid| CustomTable.find(tid).visible_to?(issue) }
       end
 
-      # mount the query for this scope
-      where("#{table_name}.visible = ? or #{table_name}.id in (?) or #{table_name}.id in (?)", visible_column, user_table_ids, user_projects_table_ids)
+      if issue
+        where("#{table_name}.visible = ? or #{table_name}.id in (?)", visible_column, user_projects_table_ids)
+      else
+        where("#{table_name}.visible = ? or #{table_name}.id in (?)", visible_column, user_table_ids)
+      end
     end
   }
 
