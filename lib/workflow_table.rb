@@ -24,9 +24,13 @@ module WorkflowTable
     table = CustomTable.find(table.to_i) if table.is_a?Integer or table.is_a?String
 
     if @issue.nil? # View was reached through route /custom_tables/[:id]
-    	if permissions.size == 0 && permissions.include?(:view_table_rows)
+    	# FIXEM: WTF I did this: permissions.size == 0 && permissions.include?(:view_table_rows)  ???
+      if permissions.size == 0 && permissions.include?(:view_table_rows)
     		# user is allowed to access the view. But the view will be responsible to check for permissions on each row
 	    	result &= true
+      else
+        # Table Member
+        result &= user.groups.map{|g| g.table_memberships.map(&:custom_table_id) }.flatten.include?(table.id)
 	    end
     else
     	if table.projects.size > 0
